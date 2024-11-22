@@ -3,13 +3,50 @@
 {% block title %}虛擬貨幣首頁{% endblock %}
 
 {% block content %}
-    <h1>虛擬貨幣價格</h1>
-    
+    <h1>虛擬貨幣價格列表</h1>
+        
     {% if error %}
         <p style="color:red;">{{ error }}</p>
     {% else %}
-        <p><strong>USD:</strong> {{ usd }}</p>
-        <p><strong>EUR:</strong> {{ eur }}</p>
-        <p><strong>時間戳:</strong> {{ timestamp }}</p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>幣種名稱</th>
+                    <th>USD</th>
+                    <th>TWD</th>
+                    <th>EUR</th>
+                    <th>時間戳</th>
+                </tr>
+            </thead>
+            {% load humanize %}
+            <tbody>
+                {% for price in all_prices %}
+                    <tr>
+                        <td>{{ price.coinname }}</td>
+
+                        {# 根據 USD 價格決定顯示的小數位數 #}
+                        {% if price.usd < 1 %}
+                            <td>{{ price.usd|floatformat:7|intcomma }}</td>  {# 小於1美元顯示最多8位小數 #}
+                        {% else %}
+                            <td>{{ price.usd|floatformat:2|intcomma }}</td>  {# 大於1美元顯示最多2位小數 #}
+                        {% endif %}
+
+                        {% if price.twd < 1 %}
+                            <td>{{ price.twd|floatformat:7|intcomma }}</td>
+                        {% else %}
+                            <td>{{ price.twd|floatformat:2|intcomma }}</td>
+                        {% endif %}
+
+                        {% if price.eur < 1 %}
+                            <td>{{ price.eur|floatformat:7|intcomma }}</td>
+                        {% else %}
+                            <td>{{ price.eur|floatformat:2|intcomma }}</td>
+                        {% endif %}
+
+                        <td>{{ price.timestamp }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 {% endblock %}

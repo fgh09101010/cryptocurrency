@@ -5,8 +5,10 @@ from django.db import models
 from django.db import models
 
 class BitcoinPrice(models.Model):
-    usd = models.DecimalField(max_digits=15, decimal_places=2)
-    eur = models.DecimalField(max_digits=15, decimal_places=2)
+    coinname = models.CharField(max_length=50, default="DefaultCoin")
+    usd = models.FloatField()
+    twd = models.FloatField()
+    eur = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
