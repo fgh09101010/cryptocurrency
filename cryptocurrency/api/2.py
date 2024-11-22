@@ -1,6 +1,17 @@
 import requests
 import mysql.connector
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+# 設定 .env 檔案的路徑
+env_path = Path(__file__).resolve().parents[2] / '.env'
+
+# 加載 .env 檔案
+load_dotenv(dotenv_path=env_path)
+
+
 
 # CryptoCompare API 端點
 url = "https://min-api.cryptocompare.com/data/price"
@@ -22,8 +33,8 @@ if response.status_code == 200:
     # 連接到 MariaDB
     conn = mysql.connector.connect(
         host="localhost",  # 替換為你的 MariaDB 主機地址
-        user="root",  # 替換為你的用戶名
-        password="qwe123poi456",  # 替換為你的密碼
+        user=os.getenv('DB_USER'),  # 替換為你的用戶名
+        password=os.getenv('DB_PASSWORD'),  # 替換為你的密碼
         database="cryptocurrency"  # 替換為你的資料庫名稱
     )
 

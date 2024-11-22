@@ -11,9 +11,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+
+env_path = Path(__file__).resolve().parents[2] / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -79,8 +87,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # 使用 MySQL 引擎，MariaDB 是與 MySQL 兼容的
         'NAME': 'cryptocurrency',  # 設定你的資料庫名稱
-        'USER': 'root',  # 設定你的資料庫用戶名
-        'PASSWORD': 'qwe123poi456',  # 設定你的資料庫密碼
+        'USER': os.getenv('DB_USER'),  # 設定你的資料庫用戶名
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # 設定你的資料庫密碼
         'HOST': 'localhost',  # 設定資料庫伺服器地址，'localhost' 或 MariaDB 的 IP 地址
         'PORT': '3306',  # 設定 MariaDB 的端口（預設端口為 3306）
     }
