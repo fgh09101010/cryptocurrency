@@ -1,0 +1,4 @@
+/* 讓分頁導航始終保持居中 */
+.container{
+    text-align: center;
+}

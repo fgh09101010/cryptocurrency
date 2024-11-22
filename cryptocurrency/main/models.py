@@ -2,7 +2,6 @@ from django.db import models
 
 # Create your models here.
 # models.py
-from django.db import models
 
 class BitcoinPrice(models.Model):
     coinname = models.CharField(max_length=50, default="DefaultCoin")

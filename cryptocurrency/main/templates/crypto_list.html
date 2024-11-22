@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}虛擬貨幣首頁{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">虛擬貨幣價格列表</h1>
+
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% else %}
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 25%; text-align: center;">幣種名稱</th>
+                    <th style="width: 15%; text-align: center;">USD</th>
+                    <th style="width: 15%; text-align: center;">TWD</th>
+                    <th style="width: 15%; text-align: center;">EUR</th>
+                    <th style="width: 30%; text-align: center;">時間戳</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for price in page_obj.object_list %}
+                    <tr>
+                        <td>{{ price.coinname }}</td>
+                        <td>{{ price.usd|floatformat:2 }}</td>
+                        <td>{{ price.twd|floatformat:2 }}</td>
+                        <td>{{ price.eur|floatformat:2 }}</td>
+                        <td>{{ price.timestamp }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 分頁導航 -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>  <!-- 第一頁 -->
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>  <!-- 上一頁 -->
+                        </a>
+                    </li>
+                {% endif %}
+
+                <!-- 顯示頁數 -->
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>  <!-- 下一頁 -->
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>  <!-- 最後一頁 -->
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}
