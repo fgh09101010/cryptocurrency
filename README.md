@@ -1,3 +1,13 @@
+# 創建虛擬環境
+python -m venv env
+
+# 啟動虛擬環境（Linux/Mac）
+source env/bin/activate  
+
+# 啟動虛擬環境（Windows）
+env\Scripts\activate
+
+
 # Cryptocurrency
 這裡放上你專案的簡短描述或介紹。
 
