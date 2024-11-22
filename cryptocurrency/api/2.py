@@ -23,7 +23,7 @@ if response.status_code == 200:
     conn = mysql.connector.connect(
         host="localhost",  # 替換為你的 MariaDB 主機地址
         user="root",  # 替換為你的用戶名
-        password="root",  # 替換為你的密碼
+        password="qwe123poi456",  # 替換為你的密碼
         database="cryptocurrency"  # 替換為你的資料庫名稱
     )
 
