@@ -8,35 +8,52 @@
 
     <div id="price-container">
         <p><strong>USD:</strong> <span id="usd-price">正在加載...</span></p>
-        <p><strong>INR:</strong> <span id="inr-price">正在加載...</span></p>
         <p><strong>EUR:</strong> <span id="eur-price">正在加載...</span></p>
     </div>
 
     <script>
-        // API URL for getting Bitcoin prices
-        const apiUrl = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,INR,EUR';
+        // API URL，用於獲取比特幣價格
+        const apiUrl = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR';
 
-        // Function to fetch the data and update the prices
+        // 定義一個函數來抓取數據並更新價格
         function fetchPrices() {
             fetch(apiUrl)
-                .then(response => response.json()) // Parse the JSON response
+                .then(response => response.json()) // 解析 JSON 響應
                 .then(data => {
-                    // Update the HTML content with the fetched data
+                    // 更新 HTML 內容顯示抓取到的價格
                     document.getElementById('usd-price').textContent = data.USD;
-                    document.getElementById('inr-price').textContent = data.INR;
                     document.getElementById('eur-price').textContent = data.EUR;
+
+                    // 發送數據到後端
+                    fetch('/save-price/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            usd: data.USD,
+                            eur: data.EUR,
+                            timestamp: new Date().toISOString()
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log(result.message);
+                    })
+                    .catch(error => {
+                        console.error('保存價格出錯:', error);
+                    });
                 })
                 .catch(error => {
-                    // In case of error, display a message
-                    console.error('Error fetching data:', error);
+                    console.error('抓取數據出錯:', error);
                     document.getElementById('price-container').innerHTML = '<p>無法加載價格，請稍後再試。</p>';
                 });
         }
 
-        // Fetch the prices immediately when the page loads
+        // 頁面加載時立即抓取價格
         fetchPrices();
 
-        // Set an interval to fetch the data every 5 seconds (5000 ms)
+        // 設定每 5 秒鐘（5000 毫秒）抓取一次數據
         setInterval(fetchPrices, 5000);
     </script>
 {% endblock %}

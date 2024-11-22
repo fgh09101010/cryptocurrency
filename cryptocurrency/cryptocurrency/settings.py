@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'cryptocurrency.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # 使用 MySQL 引擎，MariaDB 是與 MySQL 兼容的
+        'NAME': 'cryptocurrency',  # 設定你的資料庫名稱
+        'USER': 'root',  # 設定你的資料庫用戶名
+        'PASSWORD': 'qwe123poi456',  # 設定你的資料庫密碼
+        'HOST': 'localhost',  # 設定資料庫伺服器地址，'localhost' 或 MariaDB 的 IP 地址
+        'PORT': '3306',  # 設定 MariaDB 的端口（預設端口為 3306）
     }
 }
 
