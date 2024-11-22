@@ -4,56 +4,12 @@
 
 {% block content %}
     <h1>虛擬貨幣價格</h1>
-    <p>獲取比特幣（BTC）的最新價格：</p>
-
-    <div id="price-container">
-        <p><strong>USD:</strong> <span id="usd-price">正在加載...</span></p>
-        <p><strong>EUR:</strong> <span id="eur-price">正在加載...</span></p>
-    </div>
-
-    <script>
-        // API URL，用於獲取比特幣價格
-        const apiUrl = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR';
-
-        // 定義一個函數來抓取數據並更新價格
-        function fetchPrices() {
-            fetch(apiUrl)
-                .then(response => response.json()) // 解析 JSON 響應
-                .then(data => {
-                    // 更新 HTML 內容顯示抓取到的價格
-                    document.getElementById('usd-price').textContent = data.USD;
-                    document.getElementById('eur-price').textContent = data.EUR;
-
-                    // 發送數據到後端
-                    fetch('/save-price/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            usd: data.USD,
-                            eur: data.EUR,
-                            timestamp: new Date().toISOString()
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        console.log(result.message);
-                    })
-                    .catch(error => {
-                        console.error('保存價格出錯:', error);
-                    });
-                })
-                .catch(error => {
-                    console.error('抓取數據出錯:', error);
-                    document.getElementById('price-container').innerHTML = '<p>無法加載價格，請稍後再試。</p>';
-                });
-        }
-
-        // 頁面加載時立即抓取價格
-        fetchPrices();
-
-        // 設定每 5 秒鐘（5000 毫秒）抓取一次數據
-        setInterval(fetchPrices, 5000);
-    </script>
+    
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% else %}
+        <p><strong>USD:</strong> {{ usd }}</p>
+        <p><strong>EUR:</strong> {{ eur }}</p>
+        <p><strong>時間戳:</strong> {{ timestamp }}</p>
+    {% endif %}
 {% endblock %}

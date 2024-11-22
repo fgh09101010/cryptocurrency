@@ -11,9 +11,11 @@ def home(request):
     api_url = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR'
 
     try:
+        # 發送請求獲取價格數據
         response = requests.get(api_url)
         data = response.json()
 
+        # 提取價格
         usd = data.get('USD')
         eur = data.get('EUR')
         timestamp = datetime.now()  # 使用當前時間作為時間戳
@@ -21,10 +23,20 @@ def home(request):
         # 保存價格到資料庫
         BitcoinPrice.objects.create(usd=usd, eur=eur, timestamp=timestamp)
 
-        return JsonResponse({"message": "價格已保存成功！"}, status=200)
+        # 取得最新的價格資料
+        latest_price = BitcoinPrice.objects.last()
+
+        # 渲染到模板
+        return render(request, 'home.html', {
+            'usd': latest_price.usd,
+            'eur': latest_price.eur,
+            'timestamp': latest_price.timestamp,
+        })
     except Exception as e:
         print(f"錯誤: {e}")
-        return JsonResponse({"message": "保存價格失敗"}, status=500)
+        return render(request, 'home.html', {
+            'error': '無法獲取價格，請稍後再試。'
+        })
 
 def test_page(request):
     return render(request, 'test.html')
