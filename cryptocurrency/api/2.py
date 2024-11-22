@@ -1,6 +1,6 @@
 import requests
 import mysql.connector
-from datetime import datetime
+from datetime import datetime,timedelta
 from dotenv import load_dotenv
 import os
 from pathlib import Path
@@ -28,14 +28,14 @@ if response.status_code == 200:
     data = response.json()  # 解析 JSON 資料
     usd_price = data.get('USD')
     eur_price = data.get('EUR')
-    timestamp = datetime.now()  # 當前時間戳
-
+    timestamp = datetime.now()- timedelta(hours=8) # 當前時間戳
     # 連接到 MariaDB
     conn = mysql.connector.connect(
         host="localhost",  # 替換為你的 MariaDB 主機地址
         user=os.getenv('DB_USER'),  # 替換為你的用戶名
         password=os.getenv('DB_PASSWORD'),  # 替換為你的密碼
-        database="cryptocurrency"  # 替換為你的資料庫名稱
+        database="cryptocurrency",  # 替換為你的資料庫名稱
+        time_zone="+08:00"  # 設定為台灣時間
     )
 
     cursor = conn.cursor()

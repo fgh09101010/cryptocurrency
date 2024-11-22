@@ -5,19 +5,12 @@ from .models import BitcoinPrice
 from datetime import datetime
 
 # Create your views here.
-from django.http import HttpResponse
-
-def home(request):
-    from django.shortcuts import render
-from .models import BitcoinPrice
-import requests
-from datetime import datetime
 
 def home(request):
     try:
         # 取得資料庫中的最新價格
         latest_price = BitcoinPrice.objects.last()
-
+        print(latest_price.timestamp)
         # 如果資料庫中沒有資料，從 API 獲取並保存價格
         if not latest_price:
             api_url = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR'
