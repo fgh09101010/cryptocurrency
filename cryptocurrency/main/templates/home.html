@@ -1,11 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}加密貨幣首頁{% endblock %}
+{% block title %}虛擬貨幣首頁{% endblock %}
 
 {% block content %}
-    <p>我是首頁</p>
-    <p>我是首頁</p>
-    <p>我是首頁</p>
-    <p>我是首頁</p>
-    <p>我是首頁</p>
+    <h1>虛擬貨幣價格</h1>
+    <p>獲取比特幣（BTC）的最新價格：</p>
+
+    <div id="price-container">
+        <p><strong>USD:</strong> <span id="usd-price">正在加載...</span></p>
+        <p><strong>INR:</strong> <span id="inr-price">正在加載...</span></p>
+        <p><strong>EUR:</strong> <span id="eur-price">正在加載...</span></p>
+    </div>
+
+    <script>
+        // API URL for getting Bitcoin prices
+        const apiUrl = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,INR,EUR';
+
+        // Function to fetch the data and update the prices
+        function fetchPrices() {
+            fetch(apiUrl)
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    // Update the HTML content with the fetched data
+                    document.getElementById('usd-price').textContent = data.USD;
+                    document.getElementById('inr-price').textContent = data.INR;
+                    document.getElementById('eur-price').textContent = data.EUR;
+                })
+                .catch(error => {
+                    // In case of error, display a message
+                    console.error('Error fetching data:', error);
+                    document.getElementById('price-container').innerHTML = '<p>無法加載價格，請稍後再試。</p>';
+                });
+        }
+
+        // Fetch the prices immediately when the page loads
+        fetchPrices();
+
+        // Set an interval to fetch the data every 5 seconds (5000 ms)
+        setInterval(fetchPrices, 5000);
+    </script>
 {% endblock %}
