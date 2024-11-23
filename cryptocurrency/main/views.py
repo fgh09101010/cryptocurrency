@@ -24,7 +24,12 @@ def home(request):
 
 # 翻頁
 def crypto_list(request):
-    all_prices = BitcoinPrice.objects.all().order_by('id')  # 獲取所有虛擬貨幣價格
+    query = request.GET.get('query', '') 
+    if query:
+        all_prices = BitcoinPrice.objects.filter(coinname__icontains=query).order_by('id')
+    else:
+        all_prices = BitcoinPrice.objects.all().order_by('id')
+    
 
     # 設定每頁顯示的項目數量
     paginator = Paginator(all_prices, 10)  # 每頁顯示10條數據

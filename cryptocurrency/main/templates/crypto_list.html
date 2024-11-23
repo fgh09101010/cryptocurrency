@@ -5,7 +5,12 @@
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center mb-4">虛擬貨幣價格列表</h1>
-
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="query" value="{{ query }}" class="form-control" placeholder="搜尋幣種" />
+            <button type="submit" class="btn btn-primary">搜尋</button>
+        </div>
+    </form>
 
     {% if error %}
         <div class="alert alert-danger" role="alert">
