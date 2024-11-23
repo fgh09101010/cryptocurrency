@@ -1,13 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import requests
 from django.http import JsonResponse
 from .models import BitcoinPrice
 from datetime import datetime
-
-# Create your views here.
-
-from django.shortcuts import render
-from .models import BitcoinPrice
+from django.core.paginator import Paginator
 
 def home(request):
     try:
@@ -26,17 +22,7 @@ def home(request):
         })
 
 
-
-def test_page(request):
-    return render(request, 'test.html')
-
-
-
 # 翻頁
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from .models import BitcoinPrice
-
 def crypto_list(request):
     all_prices = BitcoinPrice.objects.all().order_by('id')  # 獲取所有虛擬貨幣價格
 
@@ -50,7 +36,9 @@ def crypto_list(request):
     return render(request, 'crypto_list.html', {'page_obj': page_obj})
 
 
-
+def crypto_detail(request, pk):
+    price = get_object_or_404(BitcoinPrice, pk=pk)  # 獲取單一對象，若不存在則返回404
+    return render(request, 'crypto_detail.html', {'price': price})
 
 
 

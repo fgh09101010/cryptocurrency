@@ -25,7 +25,7 @@
             <tbody>
                 {% for price in page_obj.object_list %}
                     <tr>
-                        <td>{{ price.coinname }}</td>
+                        <td><a href="{% url 'crypto_detail' price.pk %}">{{ price.coinname }}</a></td>
                         <td>{{ price.usd|floatformat:2 }}</td>
                         <td>{{ price.twd|floatformat:2 }}</td>
                         <td>{{ price.eur|floatformat:2 }}</td>

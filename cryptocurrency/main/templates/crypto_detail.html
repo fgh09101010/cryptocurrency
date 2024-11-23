@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}虛擬貨幣價格詳情{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">{{ price.coinname }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>USD:</strong> {{ price.usd|floatformat:2 }}</p>
+            <p><strong>TWD:</strong> {{ price.twd|floatformat:2 }}</p>
+            <p><strong>EUR:</strong> {{ price.eur|floatformat:2 }}</p>
+            <p><strong>時間戳:</strong> {{ price.timestamp|date:"Y-m-d H:i:s" }}</p>
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'crypto_list' %}" class="btn btn-primary">返回列表</a>
+    </div>
+</div>
+{% endblock %}

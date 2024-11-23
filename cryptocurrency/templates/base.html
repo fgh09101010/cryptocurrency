@@ -15,7 +15,24 @@
 <body>
     <!-- Header -->
     <header class="bg-primary text-white py-3 text-center">
-        <h1>這是頁首</h1>
+        <nav>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="/" class="nav-link text-white">
+                        <img src="https://hkdesignpro.com/wp-content/uploads/%E5%90%89%E7%A5%A5%E7%89%A9LOGO-1024x595.jpg" alt="Logo" style="width: auto; height: 50px;">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'crypto_list' %}" class="nav-link text-white">列表</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link text-white">選項1</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link text-white">選項2</a>
+                </li>
+            </ul>
+        </nav>
     </header>
 
     <!-- Main Content -->
