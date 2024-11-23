@@ -54,8 +54,15 @@
                             <span aria-hidden="true">&laquo;</span>  <!-- 上一頁 -->
                         </a>
                     </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>  <!-- 第一頁 -->
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&laquo;</span>  <!-- 上一頁 -->
+                    </li>
                 {% endif %}
-
+        
                 <!-- 顯示頁數 -->
                 {% for num in page_obj.paginator.page_range %}
                     {% if num == page_obj.number %}
@@ -68,7 +75,7 @@
                         </li>
                     {% endif %}
                 {% endfor %}
-
+        
                 {% if page_obj.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
@@ -79,6 +86,13 @@
                         <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>  <!-- 最後一頁 -->
                         </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&raquo;</span>  <!-- 下一頁 (禁用) -->
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>  <!-- 最後一頁 (禁用) -->
                     </li>
                 {% endif %}
             </ul>
