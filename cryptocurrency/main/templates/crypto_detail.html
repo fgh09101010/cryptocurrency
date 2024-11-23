@@ -7,9 +7,9 @@
     <h1 class="text-center mb-4">{{ price.coinname }}</h1>
     <div class="card">
         <div class="card-body">
-            <p><strong>USD:</strong> {{ price.usd|floatformat:2 }}</p>
-            <p><strong>TWD:</strong> {{ price.twd|floatformat:2 }}</p>
-            <p><strong>EUR:</strong> {{ price.eur|floatformat:2 }}</p>
+            <p><strong>USD:</strong> {{ price.usd }}</p>
+            <p><strong>TWD:</strong> {{ price.twd }}</p>
+            <p><strong>EUR:</strong> {{ price.eur }}</p>
             <p><strong>時間戳:</strong> {{ price.timestamp|date:"Y-m-d H:i:s" }}</p>
         </div>
     </div>
