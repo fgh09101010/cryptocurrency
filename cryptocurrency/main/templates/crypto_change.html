@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}虛擬貨幣換算{% endblock %}
+
+{% block content %}
+{% load humanize %}
+    <h1>Cryptocurrency Prices</h1>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">虛擬貨幣換算列表</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Coin Name</th>
+                        <th>Price (USD)</th>
+                        <th>Price (TWD)</th>
+                        <th>Price (EUR)</th>
+                        <th>Market Cap</th>
+                        <th>24h Volume</th>
+                        <th>24h Change</th>
+                        <th>Fetched At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coin in change %}
+                        <tr>
+                            <td><img src="{{ price.coin.logo_url }}">{{ coin.coin_name }}</td>
+                            <td>${{ coin.price_usd }}</td>
+                            <td>₣{{ coin.price_twd }}</td>
+                            <td>€{{ coin.price_eur }}</td>
+                            <td>{{ coin.market_cap }}</td>
+                            <td>{{ coin.volume_24h }}</td>
+                            <td>
+                                <span class="{% if coin.change_24h > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ coin.change_24h }}%
+                                </span>
+                            </td>
+                            <td>{{ coin.fetched_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+
+{% endblock %}
