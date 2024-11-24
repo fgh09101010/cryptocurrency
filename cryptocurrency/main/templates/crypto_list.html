@@ -91,6 +91,13 @@
                     <td>{{ price.twd|floatformat:2|intcomma }}</td>
                     <td>{{ price.eur|floatformat:2|intcomma }}</td>
                     <td>{{ price.timestamp }}</td>
+                    <td>
+                        
+                        <form action="{% url 'add_to_favorites' price.coin.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">加入最愛</button>
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

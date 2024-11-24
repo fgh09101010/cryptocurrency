@@ -43,6 +43,9 @@
                     <span class="me-3">歡迎, {{ user.username }}!</span>
                     <img src="{{ user.profile.profile_image.url }}">
                     <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">登出</a>
+                    <a href="{% url 'favorite_coins' %}" class="btn btn-outline-light btn-sm">我的最愛</a>
+                    <a href="{% url 'upload_profile_image' %}" class="btn btn-outline-light btn-sm">上船頭巷</a>
+                    
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">登入</a>
                 {% endif %}

@@ -11,6 +11,8 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('upload/', views.upload_profile_image, name='upload_profile_image'),
+    path('add_to_favorites/<int:pk>/', views.add_to_favorites, name='add_to_favorites'),
+    path('favorites/', views.favorite_coins, name='favorite_coins'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
