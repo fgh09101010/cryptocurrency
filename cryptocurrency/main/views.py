@@ -86,3 +86,19 @@ def crypto_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'crypto_list.html', {'page_obj': page_obj})
+
+
+from django.shortcuts import render, redirect
+from .forms import UserProfileForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def upload_profile_image(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # 或跳轉到其他頁面
+    else:
+        form = UserProfileForm(instance=request.user.profile)
+    return render(request, 'upload.html', {'form': form})
