@@ -18,44 +18,87 @@
             {{ error }}
         </div>
     {% else %}
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="table-dark">
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 25%; text-align: center;">
+                    <a href="?sort_by=coin__coinname&sort_order={% if sort_by == 'coin__coinname' and sort_order == 'asc' %}desc{% elif sort_by == 'coin__coinname' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                        幣種名稱
+                        {% if sort_by == 'coin__coinname' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593; <!-- 升序箭頭 -->
+                            {% elif sort_order == 'desc' %}
+                                &#8595; <!-- 降序箭頭 -->
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort_by=usd&sort_order={% if sort_by == 'usd' and sort_order == 'asc' %}desc{% elif sort_by == 'usd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                        USD
+                        {% if sort_by == 'usd' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort_by=twd&sort_order={% if sort_by == 'twd' and sort_order == 'asc' %}desc{% elif sort_by == 'twd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                        TWD
+                        {% if sort_by == 'twd' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort_by=eur&sort_order={% if sort_by == 'eur' and sort_order == 'asc' %}desc{% elif sort_by == 'eur' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                        EUR
+                        {% if sort_by == 'eur' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 30%; text-align: center;">
+                    <a href="?sort_by=timestamp&sort_order={% if sort_by == 'timestamp' and sort_order == 'asc' %}desc{% elif sort_by == 'timestamp' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                        時間戳
+                        {% if sort_by == 'timestamp' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for price in page_obj.object_list %}
                 <tr>
-                    <th style="width: 25%; text-align: center;">幣種名稱</th>
-                    <th style="width: 15%; text-align: center;">USD</th>
-                    <th style="width: 15%; text-align: center;">TWD</th>
-                    <th style="width: 15%; text-align: center;">EUR</th>
-                    <th style="width: 30%; text-align: center;">時間戳</th>
+                    <td><a href="{% url 'crypto_detail' price.pk %}"><img src="{{ price.coin.logo_url }}">{{ price.coin.coinname }}</a></td>
+                    <td>{{ price.usd|floatformat:2|intcomma }}</td>
+                    <td>{{ price.twd|floatformat:2|intcomma }}</td>
+                    <td>{{ price.eur|floatformat:2|intcomma }}</td>
+                    <td>{{ price.timestamp }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for price in page_obj.object_list %}
-                    <tr>
-                        <td><a href="{% url 'crypto_detail' price.pk %}"><img src="{{ price.coin.logo_url }}">{{ price.coin.coinname }}</a></td>
-                        
-                        {% if price.usd > 1 %}
-                        <td>{{ price.usd|floatformat:2|intcomma }}</td>
-                        {% else %}
-                        <td>{{ price.usd|floatformat:7|intcomma }}</td>
-                        {% endif %}
-
-                        {% if price.usd > 1 %}
-                        <td>{{ price.twd|floatformat:2|intcomma }}</td>
-                        {% else %}
-                        <td>{{ price.twd|floatformat:7|intcomma }}</td>
-                        {% endif %}
-
-                        {% if price.usd > 1 %}
-                        <td>{{ price.eur|floatformat:2|intcomma }}</td>
-                        {% else %}
-                        <td>{{ price.eur|floatformat:7|intcomma }}</td>
-                        {% endif %}
-
-                        <td>{{ price.timestamp }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    
+    
+    
 
 <!-- 分頁導航 -->
 <nav aria-label="Page navigation example">
