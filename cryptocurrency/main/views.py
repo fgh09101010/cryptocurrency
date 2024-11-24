@@ -74,18 +74,50 @@ def logout_view(request):
     return redirect('home')  # 登出後跳轉到登入頁
 
 # 需要登入的頁面保護
-@login_required
+# @login_required
+# def crypto_list(request):
+#     query = request.GET.get('query', '') 
+#     if query:
+#         all_prices = BitcoinPrice.objects.filter(coin__coinname__icontains=query).order_by('id')
+#     else:
+#         all_prices = BitcoinPrice.objects.all().order_by('id')
+    
+#     paginator = Paginator(all_prices, 10)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     return render(request, 'crypto_list.html', {'page_obj': page_obj})
+
+
+from django.db.models import F
+from django.core.paginator import Paginator
+from django.shortcuts import render
+
 def crypto_list(request):
     query = request.GET.get('query', '') 
+    sort_by = request.GET.get('sort_by')  # 排序欄位
+    sort_order = request.GET.get('sort_order')  # 排序狀態（"asc", "desc", "default"）
+
     if query:
-        all_prices = BitcoinPrice.objects.filter(coin__coinname__icontains=query).order_by('id')
+        all_prices = BitcoinPrice.objects.filter(coin__coinname__icontains=query)
     else:
-        all_prices = BitcoinPrice.objects.all().order_by('id')
-    
-    paginator = Paginator(all_prices, 10)
+        all_prices = BitcoinPrice.objects.all()
+
+    # 根據排序狀態進行排序
+    if sort_by and sort_order == 'asc':
+        all_prices = all_prices.order_by(sort_by)  # A-Z 排序
+    elif sort_by and sort_order == 'desc':
+        all_prices = all_prices.order_by(F(sort_by).desc())  # Z-A 排序
+    # "default" 狀態下不進行排序，保持自然順序
+
+    paginator = Paginator(all_prices, 10)  # 每頁顯示10條數據
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'crypto_list.html', {'page_obj': page_obj})
+
+    return render(request, 'crypto_list.html', {
+        'page_obj': page_obj,
+        'sort_by': sort_by,
+        'sort_order': sort_order,
+    })
 
 
 from django.shortcuts import render, redirect
