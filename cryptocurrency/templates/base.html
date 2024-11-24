@@ -14,6 +14,7 @@
 </head>
 <body>
     <!-- Header -->
+<<<<<<< HEAD
     <header class="bg-primary text-white py-3 text-center">
         <nav>
             <ul class="nav">
@@ -33,6 +34,41 @@
                 </li>
             </ul>
         </nav>
+=======
+    <header class="bg-primary text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <a href="/" class="d-flex align-items-center text-white text-decoration-none">
+                <img src="https://hkdesignpro.com/wp-content/uploads/%E5%90%89%E7%A5%A5%E7%89%A9LOGO-1024x595.jpg" alt="Logo" style="width: auto; height: 50px;">
+                <span class="ms-2 fw-bold">My Django Project</span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="{% url 'crypto_list' %}" class="nav-link text-white">列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link text-white">選項1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link text-white">選項2</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- User Authentication -->
+            <div>
+                {% if user.is_authenticated %}
+                    <span class="me-3">歡迎, {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">登出</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">登入</a>
+                {% endif %}
+            </div>
+        </div>
+>>>>>>> cdd587bd17d0e71f60cb27bc8813af7554292b9c
     </header>
 
     <!-- Main Content -->
