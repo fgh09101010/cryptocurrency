@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 import requests
 from django.http import JsonResponse
-from .models import BitcoinPrice
+from .models import BitcoinPrice,CryptoData
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -50,7 +50,9 @@ def crypto_detail(request, pk):
     price = get_object_or_404(BitcoinPrice, pk=pk)  # 獲取單一對象，若不存在則返回404
     return render(request, 'crypto_detail.html', {'price': price})
 
-
+def crypto_change(request):
+    change = CryptoData.objects.all()
+    return render(request, 'crypto_change.html', {'change': change})
 
 
 # 登入頁面
