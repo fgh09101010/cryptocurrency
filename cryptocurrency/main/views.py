@@ -1,13 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse
-from .models import BitcoinPrice,CryptoData
+from .models import BitcoinPrice,CryptoData,UserProfile,Coin
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
 
 
 def home(request):
@@ -134,3 +133,25 @@ def upload_profile_image(request):
     else:
         form = UserProfileForm(instance=request.user.profile)
     return render(request, 'upload.html', {'form': form})
+
+@login_required
+def add_to_favorites(request, pk):
+    user_profile = request.user.profile
+    try:
+        # 根據 pk 查詢 Coin 物件
+        crypto = Coin.objects.get(id=pk)
+        print(crypto)
+        # 將該 Coin 添加到 user's favorite_cryptos
+        user_profile.favorite_coin.add(crypto)
+        user_profile.save()
+    except Coin.DoesNotExist:
+        print(f"Coin with ID {pk} not found")  # 如果沒有找到 Coin，打印信息
+    except Exception as e:
+        print(f"An error occurred: {e}")  # 其他異常處理
+    return redirect('crypto_list')  # 重定向回顯示幣列表的頁面
+
+@login_required
+def favorite_coins(request):
+    user_profile = request.user.profile
+    favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
+    return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
