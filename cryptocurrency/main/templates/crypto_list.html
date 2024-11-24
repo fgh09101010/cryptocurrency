@@ -31,7 +31,7 @@
             <tbody>
                 {% for price in page_obj.object_list %}
                     <tr>
-                        <td><a href="{% url 'crypto_detail' price.pk %}">{{ price.coin.coinname }}</a></td>
+                        <td><a href="{% url 'crypto_detail' price.pk %}"><img src="{{ price.coin.logo_url }}">{{ price.coin.coinname }}</a></td>
                         
                         {% if price.usd > 1 %}
                         <td>{{ price.usd|floatformat:2|intcomma }}</td>
