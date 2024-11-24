@@ -3,6 +3,7 @@
 {% block title %}虛擬貨幣首頁{% endblock %}
 
 {% block content %}
+{% load humanize %}
 <div class="container mt-4">
     <h1 class="text-center mb-4">虛擬貨幣價格列表</h1>
     <form method="get" class="mb-4">
@@ -31,9 +32,25 @@
                 {% for price in page_obj.object_list %}
                     <tr>
                         <td><a href="{% url 'crypto_detail' price.pk %}">{{ price.coinname }}</a></td>
-                        <td>{{ price.usd|floatformat:2 }}</td>
-                        <td>{{ price.twd|floatformat:2 }}</td>
-                        <td>{{ price.eur|floatformat:2 }}</td>
+                        
+                        {% if price.usd > 1 %}
+                        <td>{{ price.usd|floatformat:2|intcomma }}</td>
+                        {% else %}
+                        <td>{{ price.usd|floatformat:7|intcomma }}</td>
+                        {% endif %}
+
+                        {% if price.usd > 1 %}
+                        <td>{{ price.twd|floatformat:2|intcomma }}</td>
+                        {% else %}
+                        <td>{{ price.twd|floatformat:7|intcomma }}</td>
+                        {% endif %}
+
+                        {% if price.usd > 1 %}
+                        <td>{{ price.eur|floatformat:2|intcomma }}</td>
+                        {% else %}
+                        <td>{{ price.eur|floatformat:7|intcomma }}</td>
+                        {% endif %}
+
                         <td>{{ price.timestamp }}</td>
                     </tr>
                 {% endfor %}
