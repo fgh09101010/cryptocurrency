@@ -22,7 +22,7 @@ headers = {
 url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 params = {
     'start': '1',  # 從第1名開始
-    'limit': '50',  # 取得前 50 種幣
+    'limit': '800',  # 取得前 50 種幣
     'convert': 'USD'  # 以 USD 為基準貨幣
 }
 
@@ -32,7 +32,8 @@ conn = mysql.connector.connect(
     user=os.getenv('DB_USER'),
     password=os.getenv('DB_PASSWORD'),
     database="cryptocurrency",
-    time_zone="+08:00"
+    time_zone="+08:00",
+    charset='utf8mb4'
 )
 cursor = conn.cursor()
 
@@ -100,7 +101,7 @@ if response.status_code == 200:
                 print(f"警告：{coin_name} ({coin_abbreviation}) 沒有 logo_url")
 
             # 檢查 Coin 資料表是否已經有該幣種
-            cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
+            cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s""", (coin_name, coin_abbreviation))
             coin_record = cursor.fetchone()
 
             # 若 Coin 資料表中沒有該幣種，則插入
@@ -108,7 +109,7 @@ if response.status_code == 200:
                 cursor.execute("INSERT INTO main_coin (coinname, abbreviation, logo_url) VALUES (%s, %s, %s)", 
                                (coin_name, coin_abbreviation, logo_url))
                 conn.commit()  # 提交事務
-                cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
+                cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s""", (coin_name, coin_abbreviation))
                 coin_record = cursor.fetchone()
 
             # 取得該幣種的 id
