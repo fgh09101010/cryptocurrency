@@ -22,7 +22,7 @@ headers = {
 url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 params = {
     'start': '1',  # 從第1名開始
-    'limit': '800',  # 取得前 50 種幣
+    'limit': '900',  # 取得前 50 種幣
     'convert': 'USD'  # 以 USD 為基準貨幣
 }
 
