@@ -26,7 +26,7 @@ def home(request):
 def crypto_list(request):
     query = request.GET.get('query', '') 
     if query:
-        all_prices = BitcoinPrice.objects.filter(coinname__icontains=query).order_by('id')
+        all_prices = BitcoinPrice.objects.filter(coin__coinname__icontains=query).order_by('id')
     else:
         all_prices = BitcoinPrice.objects.all().order_by('id')
     

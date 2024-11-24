@@ -82,7 +82,7 @@
                         {% for price in all_prices %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ price.coinname }}</td>
+                                <td>{{ price.coin.coinname }}</td>
 
                                 {% if price.usd < 1 %}
                                     <td>{{ price.usd|floatformat:7|intcomma }}</td>
