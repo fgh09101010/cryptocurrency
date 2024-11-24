@@ -38,7 +38,7 @@ cursor = conn.cursor()
 
 # 插入數據的 SQL 查詢
 insert_query = """
-INSERT INTO main_bitcoinprice (coinname, usd, twd, eur, timestamp)
+INSERT INTO main_bitcoinprice (coin_id, usd, twd, eur, timestamp)
 VALUES (%s, %s, %s, %s, %s)
 """
 
@@ -74,14 +74,29 @@ if response.status_code == 200:
     # 處理前 50 種幣種
     for coin in data:
         coin_name = coin["name"]  # 幣種名稱 (如 Bitcoin, Ethereum 等)
+        coin_abbreviation = coin["symbol"]  # 幣種簡稱 (如 BTC, ETH 等)
         usd_price = float(coin["quote"]["USD"]["price"])  # 美元價格
         eur_price = usd_price * eur_conversion_rate  # 使用實時匯率換算成歐元
         twd_price = usd_price * twd_conversion_rate  # 使用實時匯率換算成台幣
 
-        # 插入數據
-        cursor.execute(insert_query, (coin_name, usd_price, twd_price, eur_price, timestamp))
-        conn.commit()
-        print(f"數據已插入：{coin_name} - USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
+        # 檢查 Coin 資料表是否已經有該幣種
+        cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
+        coin_record = cursor.fetchone()
+
+        # 若 Coin 資料表中沒有該幣種，則插入
+        if not coin_record:
+            cursor.execute("INSERT INTO main_coin (coinname, abbreviation) VALUES (%s, %s)", (coin_name, coin_abbreviation))
+            conn.commit()  # 提交事務
+            cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
+            coin_record = cursor.fetchone()
+
+        # 取得該幣種的 id
+        coin_id = coin_record[0]
+
+        # 插入 BitcoinPrice 資料
+        cursor.execute(insert_query, (coin_id, usd_price, twd_price, eur_price, timestamp))
+        conn.commit()  # 提交事務
+        print(f"數據已插入：{coin_name} ({coin_abbreviation}) - USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
 else:
     print("請求失敗，狀態碼：", response.status_code)
 
