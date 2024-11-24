@@ -69,7 +69,7 @@ def login_view(request):
 # 登出功能
 def logout_view(request):
     logout(request)
-    return redirect('login')  # 登出後跳轉到登入頁
+    return redirect('home')  # 登出後跳轉到登入頁
 
 # 需要登入的頁面保護
 @login_required
