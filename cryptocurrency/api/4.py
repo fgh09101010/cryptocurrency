@@ -71,32 +71,55 @@ if response.status_code == 200:
     if twd_conversion_response.status_code == 200:
         twd_conversion_rate = twd_conversion_response.json()['data']['quote']['TWD']['price']
 
-    # 處理前 50 種幣種
-    for coin in data:
-        coin_name = coin["name"]  # 幣種名稱 (如 Bitcoin, Ethereum 等)
-        coin_abbreviation = coin["symbol"]  # 幣種簡稱 (如 BTC, ETH 等)
-        usd_price = float(coin["quote"]["USD"]["price"])  # 美元價格
-        eur_price = usd_price * eur_conversion_rate  # 使用實時匯率換算成歐元
-        twd_price = usd_price * twd_conversion_rate  # 使用實時匯率換算成台幣
+    # 準備一次性請求的幣種 ID 列表
+    coin_ids = [str(coin["id"]) for coin in data]  # 擷取所有幣種的 ID
 
-        # 檢查 Coin 資料表是否已經有該幣種
-        cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
-        coin_record = cursor.fetchone()
+    # 使用 Coin IDs 一次性請求 logo 和其他資料
+    info_url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/info"
+    info_params = {
+        'id': ','.join(coin_ids)  # 將幣種 ID 組合成一個逗號分隔的字串
+    }
+    info_response = requests.get(info_url, headers=headers, params=info_params)
+    
+    if info_response.status_code == 200:
+        info_data = info_response.json()['data']
 
-        # 若 Coin 資料表中沒有該幣種，則插入
-        if not coin_record:
-            cursor.execute("INSERT INTO main_coin (coinname, abbreviation) VALUES (%s, %s)", (coin_name, coin_abbreviation))
-            conn.commit()  # 提交事務
+        # 處理每個幣種的資料
+        for coin in data:
+            coin_name = coin["name"]  # 幣種名稱 (如 Bitcoin, Ethereum 等)
+            coin_abbreviation = coin["symbol"]  # 幣種簡稱 (如 BTC, ETH 等)
+            usd_price = float(coin["quote"]["USD"]["price"])  # 美元價格
+            eur_price = usd_price * eur_conversion_rate  # 使用實時匯率換算成歐元
+            twd_price = usd_price * twd_conversion_rate  # 使用實時匯率換算成台幣
+
+            # 從 info_data 中提取 logo_url
+            coin_id = str(coin["id"])
+            logo_url = info_data.get(coin_id, {}).get('logo', '')
+
+            if not logo_url:
+                print(f"警告：{coin_name} ({coin_abbreviation}) 沒有 logo_url")
+
+            # 檢查 Coin 資料表是否已經有該幣種
             cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
             coin_record = cursor.fetchone()
 
-        # 取得該幣種的 id
-        coin_id = coin_record[0]
+            # 若 Coin 資料表中沒有該幣種，則插入
+            if not coin_record:
+                cursor.execute("INSERT INTO main_coin (coinname, abbreviation, logo_url) VALUES (%s, %s, %s)", 
+                               (coin_name, coin_abbreviation, logo_url))
+                conn.commit()  # 提交事務
+                cursor.execute("SELECT id FROM main_coin WHERE abbreviation = %s", (coin_abbreviation,))
+                coin_record = cursor.fetchone()
 
-        # 插入 BitcoinPrice 資料
-        cursor.execute(insert_query, (coin_id, usd_price, twd_price, eur_price, timestamp))
-        conn.commit()  # 提交事務
-        print(f"數據已插入：{coin_name} ({coin_abbreviation}) - USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
+            # 取得該幣種的 id
+            coin_id = coin_record[0]
+
+            # 插入 BitcoinPrice 資料
+            cursor.execute(insert_query, (coin_id, usd_price, twd_price, eur_price, timestamp))
+            conn.commit()  # 提交事務
+            print(f"數據已插入：{coin_name} ({coin_abbreviation}) - USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
+    else:
+        print("獲取 logo 資料失敗，狀態碼：", info_response.status_code)
 else:
     print("請求失敗，狀態碼：", response.status_code)
 

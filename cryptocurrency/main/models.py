@@ -3,6 +3,7 @@ from django.db import models
 class Coin(models.Model):
     coinname = models.CharField(max_length=50)
     abbreviation = models.CharField(max_length=10)  # 假設這是加密貨幣的簡稱
+    logo_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.coinname
