@@ -192,7 +192,7 @@ def favorite_coins(request):
     favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
     return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
 
-def news_list(request):
-    # 讀取所有新聞文章，並根據網站進行分組
-    all_articles = NewsArticle.objects.all().select_related('website')  # 使用 select_related 來優化查詢
+def news_list(request):  
+    # 讀取所有新聞文章，並根據時間排序
+    all_articles = NewsArticle.objects.all().order_by('-time')  # 按時間欄位倒序排序
     return render(request, 'news_list.html', {'all_articles': all_articles})
