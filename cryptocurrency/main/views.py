@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseRedirect
 from .models import BitcoinPrice,CryptoData,UserProfile,Coin
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -93,11 +93,14 @@ def crypto_list(request):
     paginator = Paginator(all_prices, 10)  # 每頁顯示10條數據
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    user_profile = request.user.profile
+    favorite_coin_ids = list(user_profile.favorite_coin.values_list('id', flat=True))  # 提取用戶最愛的加密貨幣 ID
 
     return render(request, 'crypto_list.html', {
         'page_obj': page_obj,
         'sort_by': sort_by,
         'sort_order': sort_order,
+        'favorite_coin_ids': favorite_coin_ids,
     })
 
 
@@ -131,6 +134,24 @@ def add_to_favorites(request, pk):
     except Exception as e:
         print(f"An error occurred: {e}")  # 其他異常處理
     return redirect('crypto_list')  # 重定向回顯示幣列表的頁面
+
+@login_required
+def remove_from_favorites(request, pk):
+    user_profile = request.user.profile
+    try:
+        # 根據 pk 查詢 Coin 物件
+        crypto = Coin.objects.get(id=pk)
+        print(crypto)
+        # 從 user's favorite_cryptos 刪除該 Coin
+        user_profile.favorite_coin.remove(crypto)
+        user_profile.save()
+        print(f"Removed {crypto.coinname} from favorites")  # 提示刪除成功
+    except Coin.DoesNotExist:
+        print(f"Coin with ID {pk} not found")  # 如果沒有找到 Coin，打印信息
+    except Exception as e:
+        print(f"An error occurred: {e}")  # 其他異常處理
+    referer = request.META.get('HTTP_REFERER', '/')  # 默認重定向到根目錄
+    return HttpResponseRedirect(referer)
 
 @login_required
 def favorite_coins(request):

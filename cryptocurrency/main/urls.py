@@ -12,6 +12,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('upload/', views.upload_profile_image, name='upload_profile_image'),
     path('add_to_favorites/<int:pk>/', views.add_to_favorites, name='add_to_favorites'),
+    path('remove-favorite/<int:pk>/', views.remove_from_favorites, name='remove_from_favorites'),
     path('favorites/', views.favorite_coins, name='favorite_coins'),
 ]
 if settings.DEBUG:

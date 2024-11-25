@@ -16,9 +16,9 @@
                     <td><img src="{{ coin.logo_url }}"></td>
                     <td>{{ coin.coinname}}</td>  <!-- 假設有價格字段 -->
                     <td>
-                        <form action="{% url 'add_to_favorites' coin.id %}" method="POST">
+                        <form action="{% url 'remove_from_favorites' coin.id %}" method="POST">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">移除最愛(目前沒功能)</button>
+                            <button type="submit" class="btn btn-danger">移除最愛</button>
                         </form>
                     </td>
                 </tr>

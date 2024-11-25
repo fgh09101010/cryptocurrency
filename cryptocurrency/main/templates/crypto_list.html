@@ -92,12 +92,22 @@
                     <td>{{ price.eur|floatformat:2|intcomma }}</td>
                     <td>{{ price.timestamp }}</td>
                     <td>
-                        
-                        <form action="{% url 'add_to_favorites' price.coin.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">加入最愛</button>
-                        </form>
+                        {% if price.coin.id in favorite_coin_ids %}
+                            <!-- 如果加密貨幣已在最愛清單中，顯示移除最愛 -->
+                            <form action="{% url 'remove_from_favorites' price.coin.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">移除最愛</button>
+                            </form>
+                        {% else %}
+                            <!-- 如果加密貨幣不在最愛清單中，顯示加入最愛 -->
+                            <form action="{% url 'add_to_favorites' price.coin.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">加入最愛</button>
+                            </form>
+  
+                        {% endif %}
                     </td>
+                    
                 </tr>
             {% endfor %}
         </tbody>
