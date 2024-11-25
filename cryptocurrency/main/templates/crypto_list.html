@@ -21,7 +21,7 @@
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th style="width: 25%; text-align: center;">
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=coin__coinname&sort_order={% if sort_by == 'coin__coinname' and sort_order == 'asc' %}desc{% elif sort_by == 'coin__coinname' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
                         幣種名稱
                         {% if sort_by == 'coin__coinname' %}
@@ -33,7 +33,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center;">
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=usd&sort_order={% if sort_by == 'usd' and sort_order == 'asc' %}desc{% elif sort_by == 'usd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
                         USD
                         {% if sort_by == 'usd' %}
@@ -45,7 +45,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center;">
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=twd&sort_order={% if sort_by == 'twd' and sort_order == 'asc' %}desc{% elif sort_by == 'twd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
                         TWD
                         {% if sort_by == 'twd' %}
@@ -57,7 +57,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center;">
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=eur&sort_order={% if sort_by == 'eur' and sort_order == 'asc' %}desc{% elif sort_by == 'eur' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
                         EUR
                         {% if sort_by == 'eur' %}
@@ -69,7 +69,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 30%; text-align: center;">
+                <th style="width: 30%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=timestamp&sort_order={% if sort_by == 'timestamp' and sort_order == 'asc' %}desc{% elif sort_by == 'timestamp' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
                         時間戳
                         {% if sort_by == 'timestamp' %}
@@ -81,18 +81,25 @@
                         {% endif %}
                     </a>
                 </th>
+                {% if user.is_authenticated %}
+                    <th style="width: 15%; text-align: center; vertical-align: middle;">最愛按鈕</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for price in page_obj.object_list %}
                 <tr>
-                    <td><a href="{% url 'crypto_detail' price.pk %}"><img src="{{ price.coin.logo_url }}">{{ price.coin.coinname }}</a></td>
-                    <td>{{ price.usd|floatformat:2|intcomma }}</td>
-                    <td>{{ price.twd|floatformat:2|intcomma }}</td>
-                    <td>{{ price.eur|floatformat:2|intcomma }}</td>
-                    <td>{{ price.timestamp }}</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        <a href="{% url 'crypto_detail' price.pk %}">
+                            <img src="{{ price.coin.logo_url }}" alt="logo">{{ price.coin.coinname }}
+                        </a>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.usd|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.twd|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.eur|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.timestamp }}</td>
                     {% if user.is_authenticated %}
-                    <td>      
+                        <td style="text-align: center; vertical-align: middle;">
                             {% if price.coin.id in favorite_coin_ids %}
                                 <!-- 如果加密貨幣已在最愛清單中，顯示移除最愛 -->
                                 <form action="{% url 'remove_from_favorites' price.coin.id %}" method="POST">
@@ -106,7 +113,7 @@
                                     <button type="submit" class="btn btn-primary">加入最愛</button>
                                 </form>
                             {% endif %}
-                    </td>
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}
@@ -114,9 +121,6 @@
     </table>
     
     
-    
-    
-
 <!-- 分頁導航 -->
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
