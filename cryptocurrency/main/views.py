@@ -97,9 +97,12 @@ def crypto_list(request):
     paginator = Paginator(all_prices, 10)  # 每頁顯示10條數據
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    user_profile = request.user.profile
-    favorite_coin_ids = list(user_profile.favorite_coin.values_list('id', flat=True))  # 提取用戶最愛的加密貨幣 ID
-
+    if request.user.is_authenticated:
+        user_profile = request.user.profile
+        favorite_coin_ids = list(user_profile.favorite_coin.values_list('id', flat=True))
+    else:
+        favorite_coin_ids = []
+    
     return render(request, 'crypto_list.html', {
         'page_obj': page_obj,
         'sort_by': sort_by,
