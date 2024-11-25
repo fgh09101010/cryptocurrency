@@ -6,13 +6,13 @@ import os
 from pathlib import Path
 
 # 設定 .env 檔案的路徑
-env_path = Path(__file__).resolve().parents[2] / '.env'
+env_path = Path(__file__).resolve().parents[3] / '.env'
 
 # 加載 .env 檔案
 load_dotenv(dotenv_path=env_path)
 
 # CoinMarketCap API 金鑰
-api_key = '750d435a-83eb-492b-80c4-1698f08650ff'
+api_key = os.getenv('coinmarketcap_api')
 headers = {
     'X-CMC_PRO_API_KEY': api_key,
     'Accept': 'application/json'
