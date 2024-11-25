@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}所有新聞{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">所有新聞</h1>
+
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% else %}
+            <!-- 文章列表 -->
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 20%; text-align: center;">標題</th>
+                        <th style="width: 20%; text-align: center;">圖片</th>
+                        <th style="width: 20%; text-align: center;">來源網站</th>
+                        <th style="width: 20%; text-align: center;">網址</th>
+                        <th style="width: 20%; text-align: center;">時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for article in all_articles %}
+                        <tr>
+                            <td><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></td>
+                            <td></td>
+                            <td>{{ article.website.name }}</td>
+                            <td><a href="{{ article.url }}" target="_blank">閱讀更多</a></td>
+                            <td>{{ article.time|date:"Y-m-d" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">沒有找到新聞</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -53,3 +53,21 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class NewsWebsite(models.Model):
+    name = models.CharField(max_length=255, unique=True)  # 新聞網站名稱
+
+    def __str__(self):
+        return self.name
+
+
+class NewsArticle(models.Model):
+    title = models.CharField(max_length=255)  # 標題
+    url = models.URLField()  # 網址
+    image_url = models.URLField(null=True)  # 圖片網址
+    time = models.DateTimeField()
+    website = models.ForeignKey(NewsWebsite, on_delete=models.CASCADE)  # 外鍵關聯到新聞網站
+
+    def __str__(self):
+        return self.title

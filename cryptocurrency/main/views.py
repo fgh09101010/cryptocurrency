@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse,HttpResponseRedirect
-from .models import BitcoinPrice,CryptoData,UserProfile,Coin
+from .models import BitcoinPrice,CryptoData,UserProfile,Coin,NewsWebsite,NewsArticle
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -191,3 +191,8 @@ def favorite_coins(request):
     user_profile = request.user.profile
     favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
     return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
+
+def news_list(request):
+    # 讀取所有新聞文章，並根據網站進行分組
+    all_articles = NewsArticle.objects.all().select_related('website')  # 使用 select_related 來優化查詢
+    return render(request, 'news_list.html', {'all_articles': all_articles})
