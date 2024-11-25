@@ -23,7 +23,7 @@ class BitcoinPrice(models.Model):
         return f"{self.coin.coinname} - {self.timestamp}"
     
 class CryptoData(models.Model):
-    coin_name = models.CharField(max_length=100)  # 幣種名稱
+    coin = models.ForeignKey('Coin',on_delete=models.CASCADE,related_name='crypto_data',)  
     price_usd = models.DecimalField(max_digits=20, decimal_places=2)  # 美金價格
     price_twd = models.DecimalField(max_digits=20, decimal_places=2)  # 新台幣價格
     price_eur = models.DecimalField(max_digits=20, decimal_places=2)  # 歐元價格
@@ -33,7 +33,7 @@ class CryptoData(models.Model):
     fetched_at = models.DateTimeField()  # 資料抓取時間
 
     def __str__(self):
-        return self.coin_name
+        return f"{self.coin.coinname}"
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')

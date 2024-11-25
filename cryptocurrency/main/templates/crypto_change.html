@@ -24,7 +24,7 @@
                 <tbody>
                     {% for coin in change %}
                         <tr>
-                            <td><img src="{{ price.coin.logo_url }}">{{ coin.coin_name }}</td>
+                            <td><img src="{{ coin.coin.logo_url }}">{{ coin.coin.coinname }}</td>
                             <td>${{ coin.price_usd }}</td>
                             <td>₣{{ coin.price_twd }}</td>
                             <td>€{{ coin.price_eur }}</td>
