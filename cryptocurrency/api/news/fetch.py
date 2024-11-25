@@ -65,7 +65,7 @@ def fetch_investing():
         img_url = fetch_article_image(link)
 
         # 收集數據
-        data.append([title.text.strip(), f"https://hk.investing.com{link}", img_url, time])
+        data.append([title.text.strip(), f"{link}", img_url, time])
 
     return url, data
 
