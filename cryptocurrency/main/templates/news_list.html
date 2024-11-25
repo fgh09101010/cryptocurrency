@@ -23,11 +23,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
                     {% for article in all_articles %}
                         <tr>
                             <td><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></td>
-                            <td></td>
+                            <!-- 顯示圖片 -->
+                            <td style="text-align: center;">
+                                {% if article.image_url %}
+                                    <img src="{{ article.image_url }}" alt="新聞圖片" style="max-width: 1000px; max-height: 1000px;">
+                                {% else %}
+                                    無圖片
+                                {% endif %}
+                            </td>
                             <td><a href="{{ article.website.name }}" target="_blank">{{ article.website.name }}</a></td>
                             <td><a href="{{ article.url }}" target="_blank">閱讀更多</a></td>
                             <td>{{ article.time|date:"Y-m-d" }}</td>
