@@ -102,7 +102,7 @@ def main(s):
                     print(f"警告：{coin_name} ({coin_abbreviation}) 沒有 logo_url")
 
                 # 檢查 Coin 資料表是否已經有該幣種
-                cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s""", (coin_name, coin_abbreviation))
+                cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s AND logo_url = %s""", (coin_name, coin_abbreviation, logo_url))
                 coin_record = cursor.fetchone()
 
                 # 若 Coin 資料表中沒有該幣種，則插入
@@ -110,7 +110,7 @@ def main(s):
                     cursor.execute("INSERT INTO main_coin (coinname, abbreviation, logo_url) VALUES (%s, %s, %s)", 
                                 (coin_name, coin_abbreviation, logo_url))
                     conn.commit()  # 提交事務
-                    cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s""", (coin_name, coin_abbreviation))
+                    cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s AND logo_url = %s""", (coin_name, coin_abbreviation, logo_url))
                     coin_record = cursor.fetchone()
 
                 # 取得該幣種的 id
