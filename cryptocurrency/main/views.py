@@ -7,7 +7,11 @@ from django.core.paginator import Paginator
 # 登入頁面
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
+from .forms import UserProfileForm
+from PIL import Image
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from io import BytesIO
 
 def home(request):
     try:
@@ -113,10 +117,39 @@ def upload_profile_image(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
-            form.save()
-            return redirect('home')  # 或跳轉到其他頁面
+            # 取得上傳的圖片
+            image = request.FILES.get('profile_image')
+
+            # 如果有圖片上傳，進行處理
+            if image:
+                # 使用 Pillow 處理圖片
+                img = Image.open(image)
+
+                # 將圖片轉換為 RGB 格式，並保存為 JPG
+                img = img.convert('RGB')
+
+                # 設定最大寬度與高度（可根據需要調整）
+                max_width = 50
+                max_height = 50
+                img.thumbnail((max_width, max_height))
+
+                # 保存為 JPG 格式
+                image_io = BytesIO()
+                img.save(image_io, format='JPEG')
+                image_io.seek(0)
+
+                # 將處理過的圖片轉為 Django 可以儲存的 ContentFile
+                image_name = f"{image.name.split('.')[0]}.jpg"  # 保留原檔名，但轉為 .jpg
+                user_profile_image = ContentFile(image_io.read(), name=image_name)
+
+                # 更新用戶檔案中的圖片
+                request.user.profile.profile_image.save(image_name, user_profile_image)
+
+            # 提交表單後，跳轉到主頁
+            return redirect('home')  # 或者你可以跳轉到其他頁面
     else:
         form = UserProfileForm(instance=request.user.profile)
+
     return render(request, 'upload.html', {'form': form})
 
 @login_required
