@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>上傳個人圖片</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body>
-    <h1>上傳個人圖片</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">上傳</button>
-    </form>
+<body class="upload-body">
+
+    <div class="upload-container">
+        <h1>上傳個人圖片</h1>
+
+        <!-- Display current avatar if exists -->
+        <div class="avatar-container">
+            {% if user.is_authenticated %}
+                <p>使用者名稱：{{ user.username }}</p>
+                <div><img src="{{ user.profile.profile_image.url }}" alt="Profile Image"></div>
+            {% else %}
+                <p>尚未上傳頭像</p>
+            {% endif %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            <div class="upload-form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="upload-button">上傳</button>
+        </form>
+
+        <!-- Back Button -->
+        <a href="javascript:history.back()" class="back-button">返回上一頁</a>
+
+    </div>
+
 </body>
 </html>
