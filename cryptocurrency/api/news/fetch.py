@@ -3,22 +3,19 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
 
-import requests
-from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
-import re
+
 
 # 時間轉換函數
 def convert_to_datetime(time_str):
     if "年" in time_str and "月" in time_str and "日" in time_str:
         return datetime.strptime(time_str, "%Y年%m月%d日").date()
-    elif '小時前' in time_str:
+    elif '小時' in time_str:
         hours_ago = int(re.search(r'(\d+)', time_str).group(0))
         return (datetime.now() - timedelta(hours=hours_ago)).date()
-    elif '分鐘前' in time_str:
+    elif '分钟' in time_str:
         minutes_ago = int(re.search(r'(\d+)', time_str).group(0))
         return (datetime.now() - timedelta(minutes=minutes_ago)).date()
-    elif '天前' in time_str:
+    elif '天' in time_str:
         days_ago = int(re.search(r'(\d+)', time_str).group(0))
         return (datetime.now() - timedelta(days=days_ago)).date()
     else:
@@ -63,7 +60,6 @@ def fetch_investing():
 
         # 抓取內頁圖片
         img_url = fetch_article_image(link)
-
         # 收集數據
         data.append([title.text.strip(), f"{link}", img_url, time])
 
@@ -81,6 +77,50 @@ def fetch_coindesk():
     return url,[]
 
 def fetch_yahoo():
-    url="https://finance.yahoo.com/topic/crypto/"
-    return url,[]
+    url = "https://finance.yahoo.com/topic/crypto/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    data = []
+    current_time = datetime.now()
+    articles = soup.find_all('section', class_="container sz-small stream vertical tw-self-start yf-18q3fnf responsive showMobileThumbnails")
+    for article in articles:
+        # 提取標題（h2 或 h3）
+        title_tag = article.find(['h3'], class_=['clamp yf-18q3fnf'])
+        title = title_tag.text.strip() if title_tag else "無標題"
+
+        # 提取新聞連結
+        link_tag = article.find('a')
+        link = link_tag['href'] if link_tag and link_tag.has_attr('href') else "無連結"
+
+        # 提取圖片連結
+        img_tag = article.find('img')
+        img_url = img_tag['src'] if img_tag and img_tag.has_attr('src') else "無圖片"
+
+        # 提取時間
+        time_tag = article.find('div', class_='publishing')
+        time_str = time_tag.text.strip() if time_tag else "無時間"
+
+        # 處理時間格式
+        time = "無時間"
+        if time_str != "無時間":
+            # 提取時間描述，如 "12 hours ago"
+            time_match = re.search(r'(\d+)\s*(hour|minute|second)s?\s*ago', time_str)
+            if time_match:
+                number = int(time_match.group(1))
+                unit = time_match.group(2)
+
+                if unit == "hour":
+                    time = current_time - timedelta(hours=number)
+                elif unit == "minute":
+                    time = current_time - timedelta(minutes=number)
+                elif unit == "second":
+                    time = current_time - timedelta(seconds=number)
+
+            # 將時間轉換為 yyyy-mm-dd 格式
+            time = time.strftime('%Y-%m-%d')
+
+
+        # 保存結果
+        data.append([title,link if link.startswith('http') else f"https://finance.yahoo.com{link}", img_url, time])
+    return url,data
 

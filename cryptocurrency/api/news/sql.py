@@ -40,10 +40,17 @@ def insert_sql(website_name, articles):
     INSERT INTO `main_newsarticle` (`title`, `url`, `image_url`, `time`, `website_id`)
     VALUES (%s, %s, %s, %s, %s)
     """
-
+    
+    # 檢查文章是否已存在
+    check_article_query = "SELECT 1 FROM `main_newsarticle` WHERE `title` = %s"
+    
     # 插入每篇文章資料
     for article in articles:
-        cursor.execute(insert_article_query, (article[0], article[1], article[2], article[3], website_id))
+        cursor.execute(check_article_query, (article[0],))
+        existing_article = cursor.fetchone()
+
+        if existing_article is None:  # 如果該標題不存在
+            cursor.execute(insert_article_query, (article[0], article[1], article[2], article[3], website_id))
 
     # 提交變更
     conn.commit()
