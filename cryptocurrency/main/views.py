@@ -132,8 +132,8 @@ def upload_profile_image(request):
                 img = img.convert('RGB')
 
                 # 設定最大寬度與高度（可根據需要調整）
-                max_width = 50
-                max_height = 50
+                max_width = 500
+                max_height = 500
                 img.thumbnail((max_width, max_height))
 
                 # 保存為 JPG 格式
