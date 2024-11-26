@@ -64,8 +64,8 @@ class NewsWebsite(models.Model):
 
 class NewsArticle(models.Model):
     title = models.CharField(max_length=255)  # 標題
-    url = models.URLField()  # 網址
-    image_url = models.URLField(null=True)  # 圖片網址
+    url = models.URLField(max_length=255)  # 網址
+    image_url = models.URLField(null=True,max_length=500)  # 圖片網址
     time = models.DateTimeField()
     website = models.ForeignKey(NewsWebsite, on_delete=models.CASCADE)  # 外鍵關聯到新聞網站
 
