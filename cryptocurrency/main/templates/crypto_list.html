@@ -22,7 +22,7 @@
         <thead class="table-dark">
             <tr>
                 <th style="width: 15%; text-align: center; vertical-align: middle;">
-                    <a href="?sort_by=coin__coinname&sort_order={% if sort_by == 'coin__coinname' and sort_order == 'asc' %}desc{% elif sort_by == 'coin__coinname' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                    <a href="?sort_by=coin__coinname&sort_order={% if sort_by == 'coin__coinname' and sort_order == 'asc' %}desc{% elif sort_by == 'coin__coinname' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         幣種名稱
                         {% if sort_by == 'coin__coinname' %}
                             {% if sort_order == 'asc' %}
@@ -34,7 +34,7 @@
                     </a>
                 </th>
                 <th style="width: 15%; text-align: center; vertical-align: middle;">
-                    <a href="?sort_by=usd&sort_order={% if sort_by == 'usd' and sort_order == 'asc' %}desc{% elif sort_by == 'usd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                    <a href="?sort_by=usd&sort_order={% if sort_by == 'usd' and sort_order == 'asc' %}desc{% elif sort_by == 'usd' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         USD
                         {% if sort_by == 'usd' %}
                             {% if sort_order == 'asc' %}
@@ -46,7 +46,7 @@
                     </a>
                 </th>
                 <th style="width: 15%; text-align: center; vertical-align: middle;">
-                    <a href="?sort_by=twd&sort_order={% if sort_by == 'twd' and sort_order == 'asc' %}desc{% elif sort_by == 'twd' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                    <a href="?sort_by=twd&sort_order={% if sort_by == 'twd' and sort_order == 'asc' %}desc{% elif sort_by == 'twd' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         TWD
                         {% if sort_by == 'twd' %}
                             {% if sort_order == 'asc' %}
@@ -58,7 +58,7 @@
                     </a>
                 </th>
                 <th style="width: 15%; text-align: center; vertical-align: middle;">
-                    <a href="?sort_by=eur&sort_order={% if sort_by == 'eur' and sort_order == 'asc' %}desc{% elif sort_by == 'eur' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                    <a href="?sort_by=eur&sort_order={% if sort_by == 'eur' and sort_order == 'asc' %}desc{% elif sort_by == 'eur' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         EUR
                         {% if sort_by == 'eur' %}
                             {% if sort_order == 'asc' %}
@@ -70,7 +70,7 @@
                     </a>
                 </th>
                 <th style="width: 30%; text-align: center; vertical-align: middle;">
-                    <a href="?sort_by=timestamp&sort_order={% if sort_by == 'timestamp' and sort_order == 'asc' %}desc{% elif sort_by == 'timestamp' and sort_order == 'desc' %}default{% else %}asc{% endif %}">
+                    <a href="?sort_by=timestamp&sort_order={% if sort_by == 'timestamp' and sort_order == 'asc' %}desc{% elif sort_by == 'timestamp' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         時間戳
                         {% if sort_by == 'timestamp' %}
                             {% if sort_order == 'asc' %}
@@ -121,18 +121,19 @@
     </table>
     
     
+    
 <!-- 分頁導航 -->
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         <!-- 第一頁與上一頁 -->
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1" aria-label="First">
+                <a class="page-link" href="?page=1&sort_by={{ sort_by }}&sort_order={{ sort_order }}" aria-label="First">
                     <span aria-hidden="true">&laquo;&laquo;</span> <!-- 第一頁 -->
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span> <!-- 上一頁 -->
                 </a>
             </li>
@@ -161,7 +162,7 @@
                     </li>
                 {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endif %}
@@ -177,12 +178,12 @@
         <!-- 下一頁與最後一頁 -->
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span> <!-- 下一頁 -->
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" aria-label="Last">
                     <span aria-hidden="true">&raquo;&raquo;</span> <!-- 最後一頁 -->
                 </a>
             </li>
@@ -194,7 +195,9 @@
                 <span class="page-link" aria-hidden="true">&raquo;&raquo;</span> <!-- 最後一頁 (禁用) -->
             </li>
         {% endif %}
-            <a>&nbsp</a>
+
+        <a>&nbsp;</a>
+
         <!-- 頁碼選擇下拉選單 -->
         <li class="page-item">
             <form method="get" class="d-inline-block">
@@ -207,6 +210,7 @@
         </li>
     </ul>
 </nav>
+
 
 
     {% endif %}
