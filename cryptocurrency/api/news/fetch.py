@@ -73,8 +73,55 @@ if __name__ == "__main__":
 
 
 def fetch_coindesk():
-    url="https://www.coindesk.com/"
-    return url,[]
+    data = []
+    url = "https://www.coindesk.com/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # 找到文章列表
+    articles = soup.find_all(class_='bg-white flex gap-6 w-full shrink')
+
+    for article in articles:
+        title = article.find('h3').text  # 假設每篇文章的標題都在 <h2> 標籤中
+        link = article.find('a', class_="text-color-charcoal-900 mb-4 hover:underline")["href"]
+
+        img_url = ""
+        time = article.find('span', class_="Noto_Sans_xs_Sans-400-xs")
+        
+        if time is None: 
+            continue
+        
+        time_text = time.text.strip()
+        
+        if "Paid for by" in time_text:
+            continue
+
+
+        if "HRS AGO" in time_text or "MINS AGO" in time_text:
+
+            match = re.match(r"(\d+)\s*(HRS|MINS)\s*AGO", time_text)
+            if match:
+                number = int(match.group(1))
+                unit = match.group(2)
+                
+                if unit == "HRS":
+                    time_obj = datetime.now() - timedelta(hours=number)
+                elif unit == "MINS":
+                    time_obj = datetime.now() - timedelta(minutes=number)
+                    
+                time_text = time_obj.strftime("%Y-%m-%d")
+        
+
+        else:
+            try:
+                time_obj = datetime.strptime(time_text, "%b %d, %Y")
+                time_text = time_obj.strftime("%Y-%m-%d")
+            except ValueError:
+
+                continue
+        
+        data.append([title, f"https://www.coindesk.com/{link}", img_url, time_text])
+    return url,data
 
 def fetch_yahoo():
     url = "https://finance.yahoo.com/topic/crypto/"
