@@ -96,21 +96,21 @@ def main(s):
 
                 # 從 info_data 中提取 logo_url
                 coin_id = str(coin["id"])
-                logo_url = info_data.get(coin_id, {}).get('logo', '')
+                logo_url = info_data.get(coin_id, {}).get('logo', '')  # 如果有 logo_url
 
                 if not logo_url:
                     print(f"警告：{coin_name} ({coin_abbreviation}) 沒有 logo_url")
 
-                # 檢查 Coin 資料表是否已經有該幣種
-                cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s AND logo_url = %s""", (coin_name, coin_abbreviation, logo_url))
+                # 檢查 Coin 資料表是否已經有該幣種（僅根據 api_id）
+                cursor.execute("""SELECT id FROM main_coin WHERE api_id = %s""", (coin["id"],))
                 coin_record = cursor.fetchone()
 
                 # 若 Coin 資料表中沒有該幣種，則插入
                 if not coin_record:
-                    cursor.execute("INSERT INTO main_coin (coinname, abbreviation, logo_url) VALUES (%s, %s, %s)", 
-                                (coin_name, coin_abbreviation, logo_url))
+                    cursor.execute("INSERT INTO main_coin (coinname, abbreviation, logo_url, api_id) VALUES (%s, %s, %s, %s)", 
+                                (coin_name, coin_abbreviation, logo_url, coin["id"]))  # 儲存 api_id
                     conn.commit()  # 提交事務
-                    cursor.execute("""SELECT id FROM main_coin WHERE coinname = %s AND abbreviation = %s AND logo_url = %s""", (coin_name, coin_abbreviation, logo_url))
+                    cursor.execute("""SELECT id FROM main_coin WHERE api_id = %s""", (coin["id"],))
                     coin_record = cursor.fetchone()
 
                 # 取得該幣種的 id
