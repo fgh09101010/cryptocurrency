@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse,HttpResponseRedirect
-from .models import BitcoinPrice,CryptoData,UserProfile,Coin,NewsWebsite,NewsArticle
+from .models import BitcoinPrice,CryptoData,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -12,7 +12,8 @@ from PIL import Image
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from io import BytesIO
-
+import plotly.graph_objects as go
+ 
 def home(request):
     try:
         # 取得資料庫中的所有價格，按 id 升序排列
@@ -32,8 +33,39 @@ def home(request):
 
 
 def crypto_detail(request, pk):
+    # 查詢 CoinHistory 資料
+    coin_history = CoinHistory.objects.filter(coin_id=pk).order_by('date')
+
+    # 準備資料
+    dates = [entry.date for entry in coin_history]
+    open_prices = [entry.open_price for entry in coin_history]
+    high_prices = [entry.high_price for entry in coin_history]
+    low_prices = [entry.low_price for entry in coin_history]
+    close_prices = [entry.close_price for entry in coin_history]
+
+    # 創建 K 線圖
+    fig = go.Figure(data=[go.Candlestick(
+        x=dates,
+        open=open_prices,
+        high=high_prices,
+        low=low_prices,
+        close=close_prices,
+        name="Candlestick"
+    )])
+
+    # 更新圖表的布局
+    fig.update_layout(
+        title=f"Price History for Coin {pk}",
+        xaxis_title="Date",
+        yaxis_title="Price",
+        xaxis_rangeslider_visible=False
+    )
+
+    # 將圖表的 HTML 代碼傳遞到模板
+    graph = fig.to_html(full_html=False)
     price = get_object_or_404(BitcoinPrice, pk=pk)  # 獲取單一對象，若不存在則返回404
-    return render(request, 'crypto_detail.html', {'price': price})
+    return render(request, 'crypto_detail.html', {'price':price,'graph': graph})
+    
 
 def crypto_change(request):
     change = CryptoData.objects.all()
@@ -199,3 +231,38 @@ def news_list(request):
     # 讀取所有新聞文章，並根據時間排序
     all_articles = NewsArticle.objects.all().order_by('-time')  # 按時間欄位倒序排序
     return render(request, 'news_list.html', {'all_articles': all_articles})
+
+
+def coin_history(request, coin_id):
+    # 查詢 CoinHistory 資料
+    coin_history = CoinHistory.objects.filter(coin_id=coin_id).order_by('date')
+
+    # 準備資料
+    dates = [entry.date for entry in coin_history]
+    open_prices = [entry.open_price for entry in coin_history]
+    high_prices = [entry.high_price for entry in coin_history]
+    low_prices = [entry.low_price for entry in coin_history]
+    close_prices = [entry.close_price for entry in coin_history]
+
+    # 創建 K 線圖
+    fig = go.Figure(data=[go.Candlestick(
+        x=dates,
+        open=open_prices,
+        high=high_prices,
+        low=low_prices,
+        close=close_prices,
+        name="Candlestick"
+    )])
+
+    # 更新圖表的布局
+    fig.update_layout(
+        title=f"Price History for Coin {coin_id}",
+        xaxis_title="Date",
+        yaxis_title="Price",
+        xaxis_rangeslider_visible=False
+    )
+
+    # 將圖表的 HTML 代碼傳遞到模板
+    graph = fig.to_html(full_html=False)
+
+    return render(request, 'coin_history.html', {'graph': graph})
