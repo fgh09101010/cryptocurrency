@@ -14,8 +14,9 @@ def get_x():
     data=[]
     url = "https://api.twitter.com/2/tweets/search/recent"
     params = {
-        'query': 'from:realdonaldtrump -Auto-reply',  # 查询条件
-        'max_results': 10  # 返回最多10条结果
+    'query': 'from:realdonaldtrump -Auto-reply',  # 查询条件
+    'max_results': 10,  # 返回最多10条结果
+    'tweet.fields': 'id,text'  # 获取推文的 id 和 text 字段
     }
     # 設定標頭，包含 Authorization
     headers = {
@@ -31,10 +32,10 @@ def get_x():
         data = response.json()
         
         # 提取所有推文的 id
-        tweet_ids = [tweet['id'] for tweet in data['data']]
-        
+        tweet = [[tweet['id'],tweet['text']] for tweet in data['data']]
+
         # 打印所有推文的 id
-        return tweet_ids
+        return tweet
     else:
         # 打印錯誤訊息
         print(f"Error: {response.status_code}")

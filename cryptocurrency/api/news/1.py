@@ -1,7 +1,7 @@
 from fetch import *
 from sql import *
 
-
+#預計一天一次
 if __name__ == "__main__":
     insert_sql(*fetch_investing())
     insert_sql(*fetch_coindesk()) #先不抓圖片 等內文再一起抓
