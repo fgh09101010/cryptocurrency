@@ -151,17 +151,23 @@ def fetch_yahoo():
         time = "無時間"
         if time_str != "無時間":
             # 提取時間描述，如 "12 hours ago"
-            time_match = re.search(r'(\d+)\s*(hour|minute|second)s?\s*ago', time_str)
-            if time_match:
-                number = int(time_match.group(1))
-                unit = time_match.group(2)
+            if "yesterday" in time_str.lower():
+                time = current_time - timedelta(days=1)
+            else:
+                # 提取時間描述，如 "12 hours ago"
+                time_match = re.search(r'(\d+)\s*(hour|minute|second)s?\s*ago', time_str)
+                if time_match:
+                    number = int(time_match.group(1))
+                    unit = time_match.group(2)
 
-                if unit == "hour":
-                    time = current_time - timedelta(hours=number)
-                elif unit == "minute":
-                    time = current_time - timedelta(minutes=number)
-                elif unit == "second":
-                    time = current_time - timedelta(seconds=number)
+                    if unit == "hour":
+                        time = current_time - timedelta(hours=number)
+                    elif unit == "minute":
+                        time = current_time - timedelta(minutes=number)
+                    elif unit == "second":
+                        time = current_time - timedelta(seconds=number)
+                    elif unit == "yesterday":
+                        time = current_time - timedelta(days=1)
 
             # 將時間轉換為 yyyy-mm-dd 格式
             time = time.strftime('%Y-%m-%d')
