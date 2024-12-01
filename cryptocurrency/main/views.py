@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse,HttpResponseRedirect
-from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost
+from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost,User
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -12,6 +12,8 @@ from PIL import Image
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from io import BytesIO
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
 import plotly.graph_objects as go
  
 def home(request):
@@ -65,6 +67,38 @@ def crypto_detail(request, pk):
     graph = fig.to_html(full_html=False)
     price = get_object_or_404(BitcoinPrice, pk=pk)  # 獲取單一對象，若不存在則返回404
     return render(request, 'crypto_detail.html', {'price':price,'graph': graph})
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        email = request.POST['email']
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+
+        # 密碼加密，Django 會自動處理
+        encrypted_password = make_password(password)
+
+        try:
+            # 創建用戶，使用內建的 create_user 方法來自動加密密碼
+            user = User.objects.create_user(
+                username=username,
+                password=encrypted_password,
+                email=email,
+                first_name=first_name,
+                last_name=last_name
+            )
+            user.save()
+
+            # 註冊成功後跳轉到 'login' 頁面
+            messages.success(request, 'Your account has been created! Please log in.')
+            return redirect('login')  # 註冊成功後重定向到首頁
+
+        except Exception as e:
+            messages.error(request, f'Error creating user: {e}')
+            return render(request, 'register.html')  # 出現錯誤時返回註冊頁面
+
+    return render(request, 'register.html')
     
 
 
