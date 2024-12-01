@@ -8,7 +8,7 @@ class Coin(models.Model):
     coinname = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=100)  # 假設這是加密貨幣的簡稱
     logo_url = models.URLField(blank=True, null=True)
-    api_id = models.BigIntegerField(max_length=50, unique=True, null=True)
+    api_id = models.BigIntegerField( unique=True, null=True)
 
     def __str__(self):
         return self.coinname
@@ -86,3 +86,11 @@ class CoinHistory(models.Model):
 
     def __str__(self):
         return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+
+class XPost(models.Model):
+    ids = models.CharField(max_length=255, unique=True)
+    html = models.TextField()
+
+    def __str__(self):
+        return f"Tweet ID: {self.ids}"
