@@ -76,14 +76,11 @@ def register_view(request):
         first_name = request.POST.get('first_name', '')
         last_name = request.POST.get('last_name', '')
 
-        # 密碼加密，Django 會自動處理
-        encrypted_password = make_password(password)
-
         try:
-            # 創建用戶，使用內建的 create_user 方法來自動加密密碼
+            # 使用 create_user 方法來創建用戶，這會自動加密密碼
             user = User.objects.create_user(
                 username=username,
-                password=encrypted_password,
+                password=password,  # 這裡傳遞原始密碼即可
                 email=email,
                 first_name=first_name,
                 last_name=last_name
@@ -92,13 +89,14 @@ def register_view(request):
 
             # 註冊成功後跳轉到 'login' 頁面
             messages.success(request, 'Your account has been created! Please log in.')
-            return redirect('login')  # 註冊成功後重定向到首頁
+            return redirect('login')
 
         except Exception as e:
             messages.error(request, f'Error creating user: {e}')
             return render(request, 'register.html')  # 出現錯誤時返回註冊頁面
 
     return render(request, 'register.html')
+
     
 
 
