@@ -262,3 +262,9 @@ def coin_history(request, coin_id):
     graph = fig.to_html(full_html=False)
 
     return render(request, 'coin_history.html', {'graph': graph})
+
+
+def X_list(request):
+    # 获取指定 id 的 XPost 对象
+    xposts = XPost.objects.all()
+    return render(request, 'x_list.html', {'xposts': xposts})

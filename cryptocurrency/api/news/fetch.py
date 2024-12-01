@@ -21,23 +21,7 @@ def convert_to_datetime(time_str):
     else:
         print("無法解析", time_str)
         return datetime.now().date()
-
-# 抓取內頁圖片函數
-def fetch_article_image(article_url):
-    # 確保拼接的 URL 是正確的
-    if not article_url.startswith("http"):
-        full_url = f"https://hk.investing.com{article_url}"  # 拼接完整URL
-    else:
-        full_url = article_url
-
-    response = requests.get(full_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # 定位內頁中的圖片標籤
-    img = soup.find('img', class_='h-full w-full object-contain')
-    if img and 'src' in img.attrs:
-        return img['src']
-    return None  # 如果圖片不存在則返回None
+    
 
 
 # 主函數：抓取新聞
@@ -59,17 +43,11 @@ def fetch_investing():
         time = convert_to_datetime(time.text.strip()) if time else datetime.now().date()
 
         # 抓取內頁圖片
-        img_url = fetch_article_image(link)
+
         # 收集數據
-        data.append([title.text.strip(), f"{link}", img_url, time])
+        data.append([title.text.strip(), f"{link}", time])
 
     return url, data
-
-# 測試函數
-if __name__ == "__main__":
-    base_url, articles_data = fetch_investing()
-    for article in articles_data:
-        print(article)
 
 
 def fetch_coindesk():
@@ -85,7 +63,6 @@ def fetch_coindesk():
         title = article.find('h3').text  # 假設每篇文章的標題都在 <h2> 標籤中
         link = article.find('a', class_="text-color-charcoal-900 mb-4 hover:underline")["href"]
 
-        img_url = ""
         time = article.find('span', class_="Noto_Sans_xs_Sans-400-xs")
         
         if time is None: 
@@ -120,7 +97,7 @@ def fetch_coindesk():
 
                 continue
         
-        data.append([title, f"https://www.coindesk.com/{link}", img_url, time_text])
+        data.append([title, f"https://www.coindesk.com/{link}", time_text])
     return url,data
 
 def fetch_yahoo():
@@ -138,10 +115,8 @@ def fetch_yahoo():
         # 提取新聞連結
         link_tag = article.find('a')
         link = link_tag['href'] if link_tag and link_tag.has_attr('href') else "無連結"
+        if "https://finance.yahoo.com" not in link:continue
 
-        # 提取圖片連結
-        img_tag = article.find('img')
-        img_url = img_tag['src'] if img_tag and img_tag.has_attr('src') else "無圖片"
 
         # 提取時間
         time_tag = article.find('div', class_='publishing')
@@ -151,23 +126,78 @@ def fetch_yahoo():
         time = "無時間"
         if time_str != "無時間":
             # 提取時間描述，如 "12 hours ago"
-            time_match = re.search(r'(\d+)\s*(hour|minute|second)s?\s*ago', time_str)
-            if time_match:
-                number = int(time_match.group(1))
-                unit = time_match.group(2)
+            if "yesterday" in time_str.lower():
+                time = current_time - timedelta(days=1)
+            else:
+                # 提取時間描述，如 "12 hours ago"
+                time_match = re.search(r'(\d+)\s*(hour|minute|second)s?\s*ago', time_str)
+                if time_match:
+                    number = int(time_match.group(1))
+                    unit = time_match.group(2)
 
-                if unit == "hour":
-                    time = current_time - timedelta(hours=number)
-                elif unit == "minute":
-                    time = current_time - timedelta(minutes=number)
-                elif unit == "second":
-                    time = current_time - timedelta(seconds=number)
+                    if unit == "hour":
+                        time = current_time - timedelta(hours=number)
+                    elif unit == "minute":
+                        time = current_time - timedelta(minutes=number)
+                    elif unit == "second":
+                        time = current_time - timedelta(seconds=number)
+                    elif unit == "yesterday":
+                        time = current_time - timedelta(days=1)
 
             # 將時間轉換為 yyyy-mm-dd 格式
             time = time.strftime('%Y-%m-%d')
 
 
         # 保存結果
-        data.append([title,link if link.startswith('http') else f"https://finance.yahoo.com{link}", img_url, time])
+        data.append([title,link if link.startswith('http') else f"https://finance.yahoo.com{link}", time])
     return url,data
 
+
+def fetch_investing_content(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    # 定位內頁中的圖片標籤
+    img = soup.find('img', class_='h-full w-full object-contain')
+    content_div = soup.find('div', class_='article_WYSIWYG__O0uhw article_articlePage__UMz3q text-[18px] leading-8')
+    content = content_div.get_text(strip=True)
+    return [content,img['src']]
+
+def fetch_coindesk_content(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # 找到 img 標籤
+    img_tag = soup.find('img',class_="rounded-md")
+    try :
+        content = soup.find_all('div', class_='document-body')[1]
+    except :
+        content = soup.find_all('div', class_='document-body')[0]
+
+    content=content.get_text(strip=True)
+
+    # 獲取自定義的 url 屬性
+    url = img_tag.get('url')
+
+    return [content,url]
+def fetch_yahoo_content(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    img=""
+
+    content = soup.find('div', class_='body yf-5ef8bf')
+
+
+    content=content.get_text(strip=True)
+
+    
+    return [content,img]
+def fetch_content(t,url):
+    if t==1:
+        return fetch_investing_content(url)
+    elif t==2:
+        return fetch_coindesk_content(url)
+    elif t==3:
+        return fetch_yahoo_content(url)
+    else:
+        return "not found websiteid"

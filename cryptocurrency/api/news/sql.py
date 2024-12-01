@@ -37,8 +37,8 @@ def insert_sql(website_name, articles):
 
     # 插入文章資料
     insert_article_query = """
-    INSERT INTO `main_newsarticle` (`title`, `url`, `image_url`, `time`, `website_id`)
-    VALUES (%s, %s, %s, %s, %s)
+    INSERT INTO `main_newsarticle` (`title`, `url`, `time`, `website_id`)
+    VALUES (%s, %s, %s, %s)
     """
     
     # 檢查文章是否已存在
@@ -50,7 +50,7 @@ def insert_sql(website_name, articles):
         existing_article = cursor.fetchone()
 
         if existing_article is None:  # 如果該標題不存在
-            cursor.execute(insert_article_query, (article[0], article[1], article[2], article[3], website_id))
+            cursor.execute(insert_article_query, (article[0], article[1], article[2], website_id))
 
     # 提交變更
     conn.commit()
@@ -60,3 +60,65 @@ def insert_sql(website_name, articles):
     conn.close()
 
     print(f"{website_name}資料成功插入！")
+
+def no_content():
+    # 資料庫連接配置
+    conn = mysql.connector.connect(
+        host="localhost",  # 替換為你的資料庫主機地址
+        user=os.getenv('DB_USER'),  # 替換為你的用戶名
+        password=os.getenv('DB_PASSWORD'),  # 替換為你的密碼
+        database="cryptocurrency",  # 替換為你的資料庫名稱
+        time_zone="+08:00"  # 設定為台灣時間
+    )
+
+    cursor = conn.cursor()
+
+    # 查詢 content 為 NULL 的文章
+    select_query = """
+    SELECT id, website_id, url
+    FROM main_newsarticle
+    WHERE content IS NULL
+    """
+    
+    cursor.execute(select_query)
+    articles = cursor.fetchall()
+
+    # 顯示結果
+    data=[]
+    if articles:
+        for article in articles:
+            data.append([article[0],article[1],article[2]])
+    else:
+        print("No articles found with no content.")
+
+    # 關閉遊標和連接
+    cursor.close()
+    conn.close()
+    return data
+
+def insert_content(id,data):
+     # 資料庫連接配置
+    conn = mysql.connector.connect(
+        host="localhost",  # 替換為你的資料庫主機地址
+        user=os.getenv('DB_USER'),  # 替換為你的用戶名
+        password=os.getenv('DB_PASSWORD'),  # 替換為你的密碼
+        database="cryptocurrency",  # 替換為你的資料庫名稱
+        time_zone="+08:00"  # 設定為台灣時間
+    )
+
+    cursor = conn.cursor()
+
+    # 更新 content 和 image_url
+    update_query = """
+    UPDATE main_newsarticle
+    SET content = %s, image_url = %s
+    WHERE id = %s
+    """
+    
+    # 這裡 data[0] 是 content，data[1] 是 image_url
+    cursor.execute(update_query, (data[0], data[1], id))
+    
+    # 提交更改並關閉遊標和連接
+    conn.commit()
+    cursor.close()
+    conn.close()

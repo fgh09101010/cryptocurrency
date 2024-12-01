@@ -8,7 +8,7 @@ class Coin(models.Model):
     coinname = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=100)  # 假設這是加密貨幣的簡稱
     logo_url = models.URLField(blank=True, null=True)
-    api_id = models.BigIntegerField(unique=True, null=True)
+    api_id = models.BigIntegerField( unique=True, null=True)
 
     def __str__(self):
         return self.coinname
@@ -59,6 +59,7 @@ class NewsArticle(models.Model):
     title = models.CharField(max_length=255)  # 標題
     url = models.URLField(max_length=255)  # 網址
     image_url = models.URLField(null=True,max_length=500)  # 圖片網址
+    content = models.TextField(null=True)  # 內文欄位，使用 TextField 儲存長篇文字內容
     time = models.DateTimeField()
     website = models.ForeignKey(NewsWebsite, on_delete=models.CASCADE)  # 外鍵關聯到新聞網站
 
@@ -77,3 +78,12 @@ class CoinHistory(models.Model):
 
     def __str__(self):
         return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+
+class XPost(models.Model):
+    ids = models.CharField(max_length=255, unique=True)
+    html = models.TextField()
+    text = models.TextField()
+
+    def __str__(self):
+        return f"Tweet ID: {self.ids}"
