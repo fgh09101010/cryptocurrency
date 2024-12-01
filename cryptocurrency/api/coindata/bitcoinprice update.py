@@ -22,7 +22,7 @@ def main():
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
     params = {
         'start': '1',  # 起始位置
-        'limit': '200',   # 每次請求最多 900 種幣
+        'limit': '500',   # 每次請求最多 900 種幣
         'convert': 'USD'  # 使用美元作為基準貨幣
     }
 
@@ -39,8 +39,8 @@ def main():
 
     # 插入數據的 SQL 查詢
     insert_query = """
-    INSERT INTO main_bitcoinprice (coin_id, usd, twd, eur, timestamp)
-    VALUES (%s, %s, %s, %s, %s)
+    INSERT INTO main_bitcoinprice (coin_id, usd, twd, jpy, eur, market_cap, volume_24h, change_24h, timestamp)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
     timestamp = datetime.now() - timedelta(hours=8)  # 當前時間戳
@@ -78,6 +78,20 @@ def main():
             print("美元到台幣匯率請求失敗")
             return
         
+        # 獲取美元到日元的匯率
+        jpy_conversion_url = "https://pro-api.coinmarketcap.com/v1/tools/price-conversion"
+        jpy_conversion_params = {
+            'amount': 1,  # 換算 1 美元
+            'id': 2781,  # USD 的 CoinMarketCap ID
+            'convert': 'JPY'
+        }
+        jpy_conversion_response = requests.get(jpy_conversion_url, headers=headers, params=jpy_conversion_params)
+        if jpy_conversion_response.status_code == 200:
+            jpy_conversion_rate = jpy_conversion_response.json()['data']['quote']['JPY']['price']
+        else:
+            print("美元到日元匯率請求失敗")
+            return
+
         cursor.execute("""TRUNCATE TABLE main_bitcoinprice;""")
         conn.commit()
 
@@ -86,6 +100,10 @@ def main():
             usd_price = float(coin["quote"]["USD"]["price"])  # 美元價格
             eur_price = usd_price * eur_conversion_rate       # 歐元價格
             twd_price = usd_price * twd_conversion_rate       # 台幣價格
+            jpy_price = usd_price * jpy_conversion_rate       # 日元價格
+            market_cap = float(coin["quote"]["USD"]["market_cap"])  # 市值
+            volume_24h = float(coin["quote"]["USD"]["volume_24h"])  # 24小時交易量
+            change_24h = float(coin["quote"]["USD"]["percent_change_24h"])  # 24小時變動百分比
 
             # 根據 api_id 查找 coin_id
             cursor.execute("""SELECT id FROM main_coin WHERE api_id = %s""", (coin["id"],))
@@ -95,9 +113,9 @@ def main():
                 coin_id = coin_record[0]  # 取得對應的 coin_id
                 
                 # 插入新資料
-                cursor.execute(insert_query, (coin_id, usd_price, twd_price, eur_price, timestamp))
+                cursor.execute(insert_query, (coin_id, usd_price, twd_price, jpy_price, eur_price, market_cap, volume_24h, change_24h, timestamp))
                 conn.commit()
-                print(f"更新成功：coin_id = {coin_id}, USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
+                print(f"更新成功：coin_id = {coin_id}, USD = {usd_price}, TWD = {twd_price}, JPY = {jpy_price}, EUR = {eur_price}, 市值 = {market_cap}, 24小時交易量 = {volume_24h}, 24小時變動 = {change_24h}, 時間 = {timestamp}")
             else:
                 print(f"未找到對應的 coin_id，api_id = {coin['id']}")
     else:
@@ -105,4 +123,5 @@ def main():
 
     cursor.close()
     conn.close()
+
 main()

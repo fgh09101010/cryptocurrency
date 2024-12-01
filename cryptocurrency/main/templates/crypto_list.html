@@ -21,7 +21,7 @@
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th style="width: 15%; text-align: center; vertical-align: middle;">
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=coin__coinname&sort_order={% if sort_by == 'coin__coinname' and sort_order == 'asc' %}desc{% elif sort_by == 'coin__coinname' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         幣種名稱
                         {% if sort_by == 'coin__coinname' %}
@@ -33,7 +33,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center; vertical-align: middle;">
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=usd&sort_order={% if sort_by == 'usd' and sort_order == 'asc' %}desc{% elif sort_by == 'usd' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         USD
                         {% if sort_by == 'usd' %}
@@ -45,7 +45,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center; vertical-align: middle;">
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=twd&sort_order={% if sort_by == 'twd' and sort_order == 'asc' %}desc{% elif sort_by == 'twd' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         TWD
                         {% if sort_by == 'twd' %}
@@ -57,7 +57,19 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 15%; text-align: center; vertical-align: middle;">
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
+                    <a href="?sort_by=jpy&sort_order={% if sort_by == 'jpy' and sort_order == 'asc' %}desc{% elif sort_by == 'jpy' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
+                        JPY
+                        {% if sort_by == 'jpy' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=eur&sort_order={% if sort_by == 'eur' and sort_order == 'asc' %}desc{% elif sort_by == 'eur' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         EUR
                         {% if sort_by == 'eur' %}
@@ -69,7 +81,31 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="width: 30%; text-align: center; vertical-align: middle;">
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
+                    <a href="?sort_by=volume_24h&sort_order={% if sort_by == 'volume_24h' and sort_order == 'asc' %}desc{% elif sort_by == 'volume_24h' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
+                        24小時交易量
+                        {% if sort_by == 'volume_24h' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 10%; text-align: center; vertical-align: middle;">
+                    <a href="?sort_by=change_24h&sort_order={% if sort_by == 'change_24h' and sort_order == 'asc' %}desc{% elif sort_by == 'change_24h' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
+                        24小時變動
+                        {% if sort_by == 'change_24h' %}
+                            {% if sort_order == 'asc' %}
+                                &#8593;
+                            {% elif sort_order == 'desc' %}
+                                &#8595;
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center; vertical-align: middle;">
                     <a href="?sort_by=timestamp&sort_order={% if sort_by == 'timestamp' and sort_order == 'asc' %}desc{% elif sort_by == 'timestamp' and sort_order == 'desc' %}default{% else %}asc{% endif %}&page={{ page_obj.number }}">
                         時間戳
                         {% if sort_by == 'timestamp' %}
@@ -96,7 +132,18 @@
                     </td>
                     <td style="text-align: center; vertical-align: middle;">{{ price.usd|floatformat:2|intcomma }}</td>
                     <td style="text-align: center; vertical-align: middle;">{{ price.twd|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.jpy|floatformat:2|intcomma }}</td>
                     <td style="text-align: center; vertical-align: middle;">{{ price.eur|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ price.volume_24h|floatformat:2|intcomma }}</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        {% if price.change_24h > 0 %}
+                            <span style="color: red;">{{ price.change_24h|floatformat:2 }}%</span>
+                        {% elif price.change_24h < 0 %}
+                            <span style="color: green;">{{ price.change_24h|floatformat:2 }}%</span>
+                        {% else %}
+                            <span style="color: black;">{{ price.change_24h|floatformat:2 }}%</span>
+                        {% endif %}
+                    </td>
                     <td style="text-align: center; vertical-align: middle;">{{ price.timestamp }}</td>
                     {% if user.is_authenticated %}
                         <td style="text-align: center; vertical-align: middle;">

@@ -23,7 +23,7 @@ def main(s):
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
     params = {
         'start': str(s),  # 從第1名開始
-        'limit': '900',  # 取得前 50 種幣
+        'limit': '500',  # 取得前 50 種幣
         'convert': 'USD'  # 以 USD 為基準貨幣
     }
 
@@ -40,8 +40,8 @@ def main(s):
 
     # 插入數據的 SQL 查詢
     insert_query = """
-    INSERT INTO main_bitcoinprice (coin_id, usd, twd, eur, timestamp)
-    VALUES (%s, %s, %s, %s, %s)
+    INSERT INTO main_bitcoinprice (coin_id, usd, twd, jpy, eur, market_cap, volume_24h, change_24h, timestamp)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
     timestamp = datetime.now() - timedelta(hours=8)  # 當前時間戳
@@ -73,6 +73,17 @@ def main(s):
         if twd_conversion_response.status_code == 200:
             twd_conversion_rate = twd_conversion_response.json()['data']['quote']['TWD']['price']
 
+        # 獲取美元到日元的匯率
+        jpy_conversion_url = "https://pro-api.coinmarketcap.com/v1/tools/price-conversion"
+        jpy_conversion_params = {
+            'amount': 1,  # 換算 1 美元
+            'id': 2781,  # USD 的 CoinMarketCap ID
+            'convert': 'JPY'
+        }
+        jpy_conversion_response = requests.get(jpy_conversion_url, headers=headers, params=jpy_conversion_params)
+        if jpy_conversion_response.status_code == 200:
+            jpy_conversion_rate = jpy_conversion_response.json()['data']['quote']['JPY']['price']
+
         # 準備一次性請求的幣種 ID 列表
         coin_ids = [str(coin["id"]) for coin in data]  # 擷取所有幣種的 ID
 
@@ -93,6 +104,10 @@ def main(s):
                 usd_price = float(coin["quote"]["USD"]["price"])  # 美元價格
                 eur_price = usd_price * eur_conversion_rate  # 使用實時匯率換算成歐元
                 twd_price = usd_price * twd_conversion_rate  # 使用實時匯率換算成台幣
+                jpy_price = usd_price * jpy_conversion_rate  # 使用實時匯率換算成日元
+                market_cap = float(coin["quote"]["USD"]["market_cap"])  # 市值
+                volume_24h = float(coin["quote"]["USD"]["volume_24h"])  # 24小時交易量
+                change_24h = float(coin["quote"]["USD"]["percent_change_24h"])  # 24小時變動百分比
 
                 # 從 info_data 中提取 logo_url
                 coin_id = str(coin["id"])
@@ -117,9 +132,9 @@ def main(s):
                 coin_id = coin_record[0]
 
                 # 插入 BitcoinPrice 資料
-                cursor.execute(insert_query, (coin_id, usd_price, twd_price, eur_price, timestamp))
+                cursor.execute(insert_query, (coin_id, usd_price, twd_price, jpy_price, eur_price, market_cap, volume_24h, change_24h, timestamp))
                 conn.commit()  # 提交事務
-                print(f"數據已插入：{coin_name} ({coin_abbreviation}) - USD = {usd_price}, TWD = {twd_price}, EUR = {eur_price}, 時間 = {timestamp}")
+                print(f"數據已插入：{coin_name} ({coin_abbreviation}) - USD = {usd_price}, TWD = {twd_price}, JPY = {jpy_price}, EUR = {eur_price}, 時間 = {timestamp}")
         else:
             print("獲取 logo 資料失敗，狀態碼：", info_response.status_code)
     else:
@@ -129,6 +144,6 @@ def main(s):
     conn.close()
 
 if __name__ == "__main__":
-    start=[1,901,1801]
+    start=[1]
     for i in start:
         main(i)
