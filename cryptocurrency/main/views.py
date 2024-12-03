@@ -394,12 +394,12 @@ def update_password(request):
         # 驗證目前密碼是否正確
         if not check_password(current_password, user.password):
             messages.error(request, '目前密碼不正確。')
-            return redirect('upload')  # 導回 upload 頁面
+            return redirect('upload_profile_image')  # 導回 upload 頁面
 
         # 驗證新密碼與確認密碼是否一致
         if new_password != confirm_password:
             messages.error(request, '新密碼與確認密碼不一致。')
-            return redirect('upload')
+            return redirect('upload_profile_image')
 
         # 更新密碼
         user.set_password(new_password)
@@ -409,6 +409,6 @@ def update_password(request):
         update_session_auth_hash(request, user)
 
         messages.success(request, '密碼已成功修改。')
-        return redirect('upload')  # 導回 upload 頁面
+        return redirect('upload_profile_image')  # 導回 upload 頁面
 
     return render(request, 'upload.html')
