@@ -145,3 +145,15 @@ LOGIN_URL = '/login/'  # 未登入時跳轉到此頁面
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# settings.py
+
+# 用於發送重設密碼郵件的 SMTP 配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # 使用 Gmail 的 SMTP 服務
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # 使用 TLS 加密
+EMAIL_HOST_USER = 'a0905668609@gmail.com'  # 使用你的 Gmail 地址（用來發送郵件）
+EMAIL_HOST_PASSWORD = 'ljjd hriy boew wsyo'  # 使用 Gmail 生成的應用程式專用密碼
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # 用來發送郵件的默認地址
