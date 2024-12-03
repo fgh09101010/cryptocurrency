@@ -157,3 +157,13 @@ EMAIL_USE_TLS = True  # 使用 TLS 加密
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # 使用你的 Gmail 地址（用來發送郵件）
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # 使用 Gmail 生成的應用程式專用密碼
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # 用來發送郵件的默認地址
+
+#新增密碼強度(最小8碼)
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#         'OPTIONS': {
+#             'min_length': 8,
+#         },
+#     },
+# ]
