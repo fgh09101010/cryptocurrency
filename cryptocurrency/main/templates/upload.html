@@ -3,36 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>上傳個人圖片</title>
+    <title>使用者設定</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body class="upload-body">
+<body class="upload-user-settings-body">
 
-    <div class="upload-container">
-        <h1>上傳個人圖片</h1>
+    <div class="upload-user-settings-container">
+        <h1>使用者設定</h1>
 
-        <!-- Display current avatar if exists -->
-        <div class="avatar-container">
+        <!-- User Avatar and Basic Info -->
+        <div class="upload-profile-info-container">
             {% if user.is_authenticated %}
-                <p>使用者名稱：{{ user.username }}</p>
-                <div><img src="{{ user.profile.profile_image.url }}" alt="Profile Image"></div>
+                <div class="upload-avatar-section">
+                    <img src="{{ user.profile.profile_image.url }}" alt="Profile Image" class="upload-profile-avatar">
+                </div>
+                <div class="upload-user-details">
+                    <p><strong>使用者名稱：</strong>{{ user.first_name }}</p>
+                    <p><strong>帳號：</strong>{{ user.username }}</p>
+                </div>
             {% else %}
-                <p>尚未上傳頭像</p>
+                <p>尚未登入</p>
             {% endif %}
         </div>
 
-        <form method="post" enctype="multipart/form-data" class="upload-form">
-            {% csrf_token %}
-            <div class="upload-form-group">
-                {{ form.as_p }}
-            </div>
-            <button type="submit" class="upload-button">上傳</button>
-        </form>
+        <!-- Update Username Form -->
+        <section class="upload-form-section">
+            <h2>修改使用者名稱</h2>
+            <form method="post" class="upload-update-username-form">
+                {% csrf_token %}
+                <div class="upload-form-group">
+                    <label for="username">新使用者名稱</label>
+                    <input type="text" name="username" id="username" value="{{ user.first_name }}" required>
+                </div>
+                <button type="submit" class="upload-submit-button">修改名稱</button>
+            </form>
+        </section>
+
+        <!-- Update Profile Image Form -->
+        <section class="upload-form-section">
+            <h2>更改頭像</h2>
+            <form method="post" enctype="multipart/form-data" class="upload-update-avatar-form">
+                {% csrf_token %}
+                <div class="upload-form-group">
+                    <label for="profile_image">選擇新頭像</label>
+                    <input type="file" name="profile_image" id="profile_image" accept="image/*">
+                </div>
+                <button type="submit" class="upload-submit-button">上傳頭像</button>
+            </form>
+        </section>
+
+        <!-- Update Password Form -->
+        <section class="upload-form-section">
+            <h2>修改密碼</h2>
+            <form method="post" action="{% url 'update_password' %}" class="upload-update-password-form">
+                {% csrf_token %}
+                <div class="upload-form-group">
+                    <label for="current_password">目前密碼</label>
+                    <input type="password" name="current_password" id="current_password" required>
+                </div>
+                <div class="upload-form-group">
+                    <label for="password">新密碼</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                <div class="upload-form-group">
+                    <label for="password_confirm">確認密碼</label>
+                    <input type="password" name="password_confirm" id="password_confirm" required>
+                </div>
+                <button type="submit" class="upload-submit-button">修改密碼</button>
+            </form>
+        </section>
+        {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+        {% endif %}
 
         <!-- Back Button -->
-        <a href="javascript:history.back()" class="back-button">返回上一頁</a>
-
+        <div class="upload-back-button-container">
+            <a href="javascript:history.back()" class="upload-back-button">返回上一頁</a>
+        </div>
     </div>
 
 </body>

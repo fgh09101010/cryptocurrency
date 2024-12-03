@@ -373,3 +373,42 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'password_reset_complete.html'  # 密碼重設完成後的頁面
+
+#重設密碼
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import check_password
+from django.shortcuts import render, redirect
+from django.contrib import messages 
+
+@login_required
+def update_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('password')
+        confirm_password = request.POST.get('password_confirm')
+
+        user = request.user
+
+        # 驗證目前密碼是否正確
+        if not check_password(current_password, user.password):
+            messages.error(request, '目前密碼不正確。')
+            return redirect('upload')  # 導回 upload 頁面
+
+        # 驗證新密碼與確認密碼是否一致
+        if new_password != confirm_password:
+            messages.error(request, '新密碼與確認密碼不一致。')
+            return redirect('upload')
+
+        # 更新密碼
+        user.set_password(new_password)
+        user.save()
+
+        # 更新 session，防止用戶登出
+        update_session_auth_hash(request, user)
+
+        messages.success(request, '密碼已成功修改。')
+        return redirect('upload')  # 導回 upload 頁面
+
+    return render(request, 'upload.html')
