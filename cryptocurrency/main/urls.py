@@ -17,6 +17,7 @@ urlpatterns = [
     path('coin_history/<int:coin_id>/', views.coin_history, name='coin_history'),
     path('post/', views.X_list, name='X_list'),
     path('register/', views.register_view, name='register'),
+    path('news/<int:article_id>/', views.news_detail, name='news_detail'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

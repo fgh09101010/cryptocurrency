@@ -42,11 +42,12 @@
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 20%; text-align: center;">標題</th>
-                        <th style="width: 20%; text-align: center;">圖片</th>
-                        <th style="width: 20%; text-align: center;">來源網站</th>
-                        <th style="width: 20%; text-align: center;">網址</th>
-                        <th style="width: 20%; text-align: center;">時間</th>
+                        <th style="width: 50px; text-align: center;">標題</th>
+                        <th style="width: 50px; text-align: center;">圖片</th>
+                        <th style="width: 50px; text-align: center;">來源網站</th>
+                        <th style="width: 50px; text-align: center;">網址</th>
+                        <th style="width: 50px; text-align: center;">時間</th>
+                        <th style="width: 50px; text-align: center;">評論</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,6 +65,7 @@
                             <td><a href="{{ article.website.name }}" target="_blank"><img src="{{ article.website.icon_url }}" alt="網站圖片" style="max-width: 220px;max-height: 100px;"></a></td>
                             <td><a href="{{ article.url }}" target="_blank">閱讀更多</a></td>
                             <td>{{ article.time|date:"Y-m-d" }}</td>
+                            <td><a href="{% url 'news_detail' article_id=article.id %}">評論</a></td>
                         </tr>
                     {% empty %}
                         <tr>

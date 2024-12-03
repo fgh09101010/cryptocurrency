@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse,HttpResponseRedirect
-from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost,User
+from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost,User,Comment
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -15,6 +15,7 @@ from io import BytesIO
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 import plotly.graph_objects as go
+import re
  
 def home(request):
     try:
@@ -320,3 +321,29 @@ def X_list(request):
     # 获取指定 id 的 XPost 对象
     xposts = XPost.objects.all()
     return render(request, 'x_list.html', {'xposts': xposts})
+
+def news_detail(request, article_id):
+    # 獲取指定 ID 的新聞文章
+    article = get_object_or_404(NewsArticle, pk=article_id)
+    
+    # 根據句號、問號、驚嘆號分段
+    content = article.content
+    paragraphs = re.split(r'([。!?])', content)
+    # 重新組合段落，每個段落都會以標點符號結束
+    paragraphs = [f'{paragraphs[i]}{paragraphs[i+1]}' for i in range(0, len(paragraphs)-1, 2)]
+    
+    # 獲取所有與該文章相關的評論
+    comments = article.comments.all()
+
+    if request.method == 'POST' and request.user.is_authenticated:
+        # 提交評論的處理邏輯
+        content = request.POST.get('content')
+        if content:
+            Comment.objects.create(
+                article=article,
+                user=request.user,
+                content=content
+            )
+            return redirect('news_detail', article_id=article.id)
+
+    return render(request, 'news_detail.html', {'article': article, 'comments': comments, 'paragraphs': paragraphs})
