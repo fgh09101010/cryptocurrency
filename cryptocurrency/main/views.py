@@ -255,10 +255,30 @@ def favorite_coins(request):
     favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
     return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
 
-def news_list(request):  
-    # 讀取所有新聞文章，並根據時間排序
-    all_articles = NewsArticle.objects.all().order_by('-time')  # 按時間欄位倒序排序
-    return render(request, 'news_list.html', {'all_articles': all_articles})
+def news_list(request):
+    # 獲取搜尋關鍵字和篩選選項
+    query = request.GET.get('q', '')  # 搜尋關鍵字
+    start_date = request.GET.get('start_date', '')  # 開始日期
+    end_date = request.GET.get('end_date', '')  # 結束日期
+    
+    # 基本篩選邏輯
+    if query:
+        all_articles = NewsArticle.objects.filter(title__icontains=query)
+    else:
+        all_articles = NewsArticle.objects.all()
+    
+    # 如果提供了日期範圍，則進行日期篩選
+    if start_date:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')  # 解析日期格式
+        all_articles = all_articles.filter(time__gte=start_date)
+    if end_date:
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        all_articles = all_articles.filter(time__lte=end_date)
+    
+    # 根據時間倒序排序
+    all_articles = all_articles.order_by('-time')
+
+    return render(request, 'news_list.html', {'all_articles': all_articles, 'query': query})
 
 
 def coin_history(request, coin_id):
