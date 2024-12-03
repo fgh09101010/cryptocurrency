@@ -27,17 +27,24 @@
             {% endif %}
         </div>
 
-        <!-- Update Username Form -->
+        <!-- Update firstname Form -->
         <section class="upload-form-section">
             <h2>修改使用者名稱</h2>
-            <form method="post" class="upload-update-username-form">
+            <form method="post" action="{% url 'update_firstname' %}">
                 {% csrf_token %}
                 <div class="upload-form-group">
-                    <label for="username">新使用者名稱</label>
-                    <input type="text" name="username" id="username" value="{{ user.first_name }}" required>
+                    <label for="firstname">新使用者名稱</label>
+                    <input type="text" name="firstname" id="firstname" value="{{ user.first_name }}" required>
                 </div>
                 <button type="submit" class="upload-submit-button">修改名稱</button>
             </form>
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </section>
 
         <!-- Update Profile Image Form -->
@@ -83,7 +90,7 @@
 
         <!-- Back Button -->
         <div class="upload-back-button-container">
-            <a href="javascript:history.back()" class="upload-back-button">返回上一頁</a>
+            <a href="{% url 'home' %}" class="upload-back-button">返回上一頁</a>
         </div>
     </div>
 

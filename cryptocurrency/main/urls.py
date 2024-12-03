@@ -31,6 +31,7 @@ urlpatterns = [
     path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('update_password/', update_password, name='update_password'),
+    path('update-firstname/', views.update_firstname, name='update_firstname'),
 
 
 
