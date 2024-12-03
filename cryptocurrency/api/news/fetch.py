@@ -170,7 +170,6 @@ def fetch_coindesk_content(url):
 
     # 找到 img 標籤
     img_tag = soup.find('img',class_="rounded-md")
-    print(soup)
     try:
         # 嘗試獲取第二個符合條件的元素
         content = soup.find_all('div', class_='document-body')[1]
