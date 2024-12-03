@@ -170,15 +170,27 @@ def fetch_coindesk_content(url):
 
     # 找到 img 標籤
     img_tag = soup.find('img',class_="rounded-md")
-    try :
+    print(soup)
+    try:
+        # 嘗試獲取第二個符合條件的元素
         content = soup.find_all('div', class_='document-body')[1]
-    except :
-        content = soup.find_all('div', class_='document-body')[0]
+    except IndexError:
+        # 如果沒有第二個元素，嘗試獲取第一個元素
+        try:
+            content = soup.find_all('div', class_='document-body')[0]
+        except IndexError:
+            # 如果兩個元素都不存在，設置為 None
+            content = None
 
-    content=content.get_text(strip=True)
+    # 如果成功找到內容，則提取純文本
+    if content:
+        content = content.get_text(strip=True)
 
     # 獲取自定義的 url 屬性
-    url = img_tag.get('url')
+    try:
+        url = img_tag.get('url')
+    except:
+        url=None
 
     return [content,url]
 def fetch_yahoo_content(url):
