@@ -3,113 +3,96 @@
     text-align: center;
 }
 
-        /* Upload Page Styles */
-        .upload-body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
 
-        .upload-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-        }
+h1, h2 {
+    color: #333;
+}
 
-        .upload-container h1 {
-            text-align: center;
-            color: #333;
-            font-size: 26px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+.upload-user-settings-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .upload-form {
-            display: flex;
-            flex-direction: column;
-        }
+.upload-profile-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
 
-        .upload-form-group {
-            margin-bottom: 15px;
-        }
+.upload-avatar-section {
+    flex: 1;
+}
 
-        .upload-form-group label {
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #555;
-        }
+.upload-profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
-        .upload-form-group input[type="file"] {
-            font-size: 16px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #fafafa;
-            transition: border-color 0.3s;
-        }
+.upload-user-details {
+    flex: 2;
+    padding-left: 20px;
+}
 
-        .upload-form-group input[type="file"]:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
+.upload-form-section {
+    margin-top: 30px;
+}
 
-        .upload-button {
-            padding: 12px 25px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            width: 100%;
-            margin-top: 15px;
-            transition: background-color 0.3s;
-            text-decoration: none;
-        }
+.upload-form-group {
+    margin-bottom: 15px;
+}
 
-        .upload-button:hover {
-            background-color: #45a049;
-        }
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 
-        .upload-button:focus {
-            outline: none;
-        }
+input[type="text"], input[type="password"], input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
-        /* Styling for the current avatar display */
-        .avatar-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.upload-submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-        .avatar-container img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-        }
+.upload-submit-button:hover {
+    background-color: #45a049;
+}
 
-        .back-button {
-            display: block;
-            text-align: center;
-            background-color: #f1f1f1;
-            color: #333;
-            padding: 12px 25px;
-            margin-top: 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 16px;
-        }
+.upload-back-button {
+    display: block;
+    text-align: center;
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 12px 25px;
+    margin-top: 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
 
-        .back-button:hover {
-            background-color: #ddd;
-        }
+.upload-back-button:hover {
+    background-color: #ddd;
+}
