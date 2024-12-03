@@ -45,7 +45,7 @@ def fetch_investing():
         # 抓取內頁圖片
 
         # 收集數據
-        data.append([title.text.strip(), f"{link}", time])
+        data.append([title.text.strip(), f"{link}", time,""])
 
     return url, data
 
@@ -97,7 +97,7 @@ def fetch_coindesk():
 
                 continue
         
-        data.append([title, f"https://www.coindesk.com/{link}", time_text])
+        data.append([title, f"https://www.coindesk.com/{link}", time_text,""])
     return url,data
 
 def fetch_yahoo():
@@ -121,7 +121,9 @@ def fetch_yahoo():
         # 提取時間
         time_tag = article.find('div', class_='publishing')
         time_str = time_tag.text.strip() if time_tag else "無時間"
-
+        
+        img_tag = article.find('img')
+        img = img_tag['src']
         # 處理時間格式
         time = "無時間"
         if time_str != "無時間":
@@ -149,7 +151,7 @@ def fetch_yahoo():
 
 
         # 保存結果
-        data.append([title,link if link.startswith('http') else f"https://finance.yahoo.com{link}", time])
+        data.append([title,link if link.startswith('http') else f"https://finance.yahoo.com{link}", time,img])
     return url,data
 
 

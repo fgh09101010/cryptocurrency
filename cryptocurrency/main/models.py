@@ -50,6 +50,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 class NewsWebsite(models.Model):
     name = models.CharField(max_length=255, unique=True)  # 新聞網站名稱
+    icon_url = models.URLField(null=True,max_length=500)
 
     def __str__(self):
         return self.name
