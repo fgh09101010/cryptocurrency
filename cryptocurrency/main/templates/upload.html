@@ -82,12 +82,12 @@
                 <button type="submit" class="upload-submit-button">修改密碼</button>
             </form>
             {% if messages %}
-            <div class="messages">
+            <ul>
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    <li class="{{ message.tags }}">{{ message }}</li>
                 {% endfor %}
-            </div>
-            {% endif %}
+            </ul>
+        {% endif %}
 
         </section>
 
