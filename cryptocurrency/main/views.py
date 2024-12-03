@@ -77,6 +77,11 @@ def register_view(request):
         first_name = request.POST.get('first_name', '')
         last_name = request.POST.get('last_name', '')
 
+        # 檢查郵箱是否已經註冊
+        if User.objects.filter(email=email).exists():
+            messages.error(request, '這個email已經被使用')
+            return render(request, 'register.html')  # 若郵箱已被使用，返回註冊頁面
+
         try:
             # 使用 create_user 方法來創建用戶，這會自動加密密碼
             user = User.objects.create_user(
