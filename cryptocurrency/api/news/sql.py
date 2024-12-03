@@ -37,8 +37,8 @@ def insert_sql(website_name, articles):
 
     # 插入文章資料
     insert_article_query = """
-    INSERT INTO `main_newsarticle` (`title`, `url`, `time`, `website_id`)
-    VALUES (%s, %s, %s, %s)
+    INSERT INTO `main_newsarticle` (`title`, `url`, `time`, `website_id`,`image_url`)
+    VALUES (%s, %s, %s, %s, %s)
     """
     
     # 檢查文章是否已存在
@@ -50,7 +50,7 @@ def insert_sql(website_name, articles):
         existing_article = cursor.fetchone()
 
         if existing_article is None:  # 如果該標題不存在
-            cursor.execute(insert_article_query, (article[0], article[1], article[2], website_id))
+            cursor.execute(insert_article_query, (article[0], article[1], article[2], website_id,article[3]))
 
     # 提交變更
     conn.commit()
@@ -96,8 +96,8 @@ def no_content():
     conn.close()
     return data
 
-def insert_content(id,data):
-     # 資料庫連接配置
+def insert_content(id, data):
+    # 資料庫連接配置
     conn = mysql.connector.connect(
         host="localhost",  # 替換為你的資料庫主機地址
         user=os.getenv('DB_USER'),  # 替換為你的用戶名
@@ -108,15 +108,55 @@ def insert_content(id,data):
 
     cursor = conn.cursor()
 
-    # 更新 content 和 image_url
-    update_query = """
-    UPDATE main_newsarticle
-    SET content = %s, image_url = %s
-    WHERE id = %s
-    """
+    # 查詢 image_url 是否已經存在
+    check_query = "SELECT image_url FROM main_newsarticle WHERE id = %s"
+    cursor.execute(check_query, (id,))
+    result = cursor.fetchone()
+
+    if result[0]:
+        # 只更新 content
+        update_query = """
+        UPDATE main_newsarticle
+        SET content = %s
+        WHERE id = %s
+        """
+        cursor.execute(update_query, (data[0], id))
+    else:
+        # 如果 image_url 不存在，則更新 content 和 image_url
+        update_query = """
+        UPDATE main_newsarticle
+        SET content = %s, image_url = %s
+        WHERE id = %s
+        """
+        cursor.execute(update_query, (data[0], data[1], id))
     
-    # 這裡 data[0] 是 content，data[1] 是 image_url
-    cursor.execute(update_query, (data[0], data[1], id))
+    # 提交更改並關閉遊標和連接
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def insert_image_url(name, icon_url):
+    # 資料庫連接配置
+    conn = mysql.connector.connect(
+        host="localhost",  # 替換為你的資料庫主機地址
+        user=os.getenv('DB_USER'),  # 替換為你的用戶名
+        password=os.getenv('DB_PASSWORD'),  # 替換為你的密碼
+        database="cryptocurrency",  # 替換為你的資料庫名稱
+        time_zone="+08:00"  # 設定為台灣時間
+    )
+
+    cursor = conn.cursor()
+
+    # 插入資料
+    insert_query = """
+    INSERT INTO main_newswebsite (name, icon_url)
+    VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE icon_url = VALUES(icon_url)
+    """
+
+    # 執行插入或更新
+    cursor.execute(insert_query, (name, icon_url))
     
     # 提交更改並關閉遊標和連接
     conn.commit()

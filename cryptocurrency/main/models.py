@@ -50,6 +50,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 class NewsWebsite(models.Model):
     name = models.CharField(max_length=255, unique=True)  # 新聞網站名稱
+    icon_url = models.URLField(null=True,max_length=500)
 
     def __str__(self):
         return self.name
@@ -87,3 +88,11 @@ class XPost(models.Model):
 
     def __str__(self):
         return f"Tweet ID: {self.ids}"
+    
+class Comment(models.Model):
+    # 外鍵關聯到新聞文章
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 可選：可以使用匿名評論
+    content = models.TextField()  # 評論內容
+    created_at = models.DateTimeField(auto_now_add=True)  # 創建時間
+    updated_at = models.DateTimeField(auto_now=True)  # 更新時間

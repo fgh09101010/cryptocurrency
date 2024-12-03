@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}虛擬貨幣評論區{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- 顯示新聞內容 -->
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center">{{ article.title }}</h1>
+
+            <!-- 顯示分段內容，使用自訂的CSS -->
+            <div class="content">
+                {% for paragraph in paragraphs %}
+                    <p class="justified-paragraph">{{ paragraph }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 顯示評論區域 -->
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="text-center">Comments</h2>
+            {% if comments %}
+                <ul class="list-group">
+                    {% for comment in comments %}
+                        <li class="list-group-item">
+                            <strong>{{ comment.user.username }}</strong> 
+                            <span class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+                            <p>{{ comment.content }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center">No comments yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 提交新評論的表單 -->
+    {% if user.is_authenticated %}
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h3>Add a comment</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="content" class="form-control" rows="4" placeholder="Add a comment..." required></textarea>
+                    </div>
+                    <a href="{% url 'news_list' %}" class="btn btn-primary mt-2">Back</a>
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <p>You must be logged in to comment.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- 自訂CSS來達到所需效果 -->
+<style>
+    .justified-paragraph {
+        text-align: justify;
+        margin-top: 20px;  /* 讓段落有空白間距 */
+        margin-bottom: 20px;
+        padding-left: 20px;  /* 每一段前面空兩個半行空白 */
+        padding-right: 20px;
+    }
+</style>
+
+{% endblock %}

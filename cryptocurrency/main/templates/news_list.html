@@ -5,6 +5,33 @@
 {% block content %}
     <div class="container mt-4">
         <h1 class="text-center mb-4">所有新聞</h1>
+        <!-- 使用 d-flex 和 justify-content-center 來水平居中 -->
+        <form method="GET" action="." class="d-flex justify-content-center align-items-center" style = "margin-left: 40%; margin-bottom: 10px;">
+            <div class="row w-100">
+                <!-- 左側：關鍵字搜尋和日期篩選 -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="q">搜尋新聞</label>
+                        <input type="text" name="q" id="q" class="form-control" placeholder="Search news..." value="{{ query }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start_date">開始日期</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request.GET.start_date }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="end_date">結束日期</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request.GET.end_date }}">
+                    </div>
+                </div>
+
+                <!-- 右側：提交按鈕 -->
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary" style = "margin-bottom: 160%;">Search</button>
+                </div>
+            </div>
+        </form>
 
         {% if error %}
             <div class="alert alert-danger" role="alert">
@@ -15,11 +42,12 @@
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 20%; text-align: center;">標題</th>
-                        <th style="width: 20%; text-align: center;">圖片</th>
-                        <th style="width: 20%; text-align: center;">來源網站</th>
-                        <th style="width: 20%; text-align: center;">網址</th>
-                        <th style="width: 20%; text-align: center;">時間</th>
+                        <th style="width: 50px; text-align: center;">標題</th>
+                        <th style="width: 50px; text-align: center;">圖片</th>
+                        <th style="width: 50px; text-align: center;">來源網站</th>
+                        <th style="width: 50px; text-align: center;">網址</th>
+                        <th style="width: 50px; text-align: center;">時間</th>
+                        <th style="width: 50px; text-align: center;">評論</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,9 +62,10 @@
                                     無圖片
                                 {% endif %}
                             </td>
-                            <td><a href="{{ article.website.name }}" target="_blank">{{ article.website.name }}</a></td>
+                            <td><a href="{{ article.website.name }}" target="_blank"><img src="{{ article.website.icon_url }}" alt="網站圖片" style="max-width: 220px;max-height: 100px;"></a></td>
                             <td><a href="{{ article.url }}" target="_blank">閱讀更多</a></td>
                             <td>{{ article.time|date:"Y-m-d" }}</td>
+                            <td><a href="{% url 'news_detail' article_id=article.id %}">評論</a></td>
                         </tr>
                     {% empty %}
                         <tr>
@@ -46,5 +75,6 @@
                 </tbody>
             </table>
         {% endif %}
+
     </div>
 {% endblock %}
