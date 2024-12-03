@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+
 <body class="upload-user-settings-body">
 
     <div class="upload-user-settings-container">
@@ -15,15 +17,15 @@
         <!-- User Avatar and Basic Info -->
         <div class="upload-profile-info-container">
             {% if user.is_authenticated %}
-                <div class="upload-avatar-section">
-                    <img src="{{ user.profile.profile_image.url }}" alt="Profile Image" class="upload-profile-avatar">
-                </div>
-                <div class="upload-user-details">
-                    <p><strong>使用者名稱：</strong>{{ user.first_name }}</p>
-                    <p><strong>帳號：</strong>{{ user.username }}</p>
-                </div>
+            <div class="upload-avatar-section">
+                <img src="{{ user.profile.profile_image.url }}" alt="Profile Image" class="upload-profile-avatar">
+            </div>
+            <div class="upload-user-details">
+                <p><strong>使用者名稱：</strong>{{ user.first_name }}</p>
+                <p><strong>帳號：</strong>{{ user.username }}</p>
+            </div>
             {% else %}
-                <p>尚未登入</p>
+            <p>尚未登入</p>
             {% endif %}
         </div>
         <hr>
@@ -103,4 +105,5 @@
     </div>
 
 </body>
+
 </html>
