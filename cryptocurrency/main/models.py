@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Coin(models.Model):
@@ -71,11 +72,11 @@ class NewsArticle(models.Model):
 class CoinHistory(models.Model):
     coin = models.ForeignKey(Coin, related_name='history', on_delete=models.CASCADE)  # 外鍵，關聯到 Coin 模型
     date = models.DateTimeField()  # 日期
-    open_price = models.DecimalField(max_digits=20, decimal_places=2)  # 開盤價
-    high_price = models.DecimalField(max_digits=20, decimal_places=2)  # 最高價
-    low_price = models.DecimalField(max_digits=20, decimal_places=2)  # 最低價
-    close_price = models.DecimalField(max_digits=20, decimal_places=2)  # 收盤價
-    volume = models.DecimalField(max_digits=20, decimal_places=2)  # 成交量
+    open_price = models.DecimalField(max_digits=20, decimal_places=10)  # 開盤價
+    high_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最高價
+    low_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最低價
+    close_price = models.DecimalField(max_digits=20, decimal_places=10)  # 收盤價
+    volume = models.DecimalField(max_digits=65, decimal_places=10)  # 成交量
 
     def __str__(self):
         return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
@@ -91,13 +92,26 @@ class XPost(models.Model):
     
 class Comment(models.Model):
     # 外鍵關聯到新聞文章
-    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 可選：可以使用匿名評論
-    content = models.TextField()  # 評論內容
-    created_at = models.DateTimeField(auto_now_add=True)  # 創建時間
-    updated_at = models.DateTimeField(auto_now=True)  # 更新時間
+    article = models.ForeignKey('NewsArticle', related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)# 可選：可以使用匿名評論
+    content = models.TextField()# 評論內容
+    created_at = models.DateTimeField(default=timezone.now)# 創建時間
+    updated_at = models.DateTimeField(auto_now=True)# 更新時間
 
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.article.title}'
 
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, related_name='replies', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Reply by {self.user.username} to comment {self.comment.id}'
+    
+    
 class UserNotificationPreference(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="notification_preference")
     news_notifications = models.BooleanField(default=True)  # 是否接收新聞通知

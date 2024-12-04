@@ -8,7 +8,7 @@
     {% if error %}
         <p style="color: red;">{{ error }}</p>
     {% endif %}
-    <form method="post">
+    <form method="post" class="login_form">
         {% csrf_token %}
         <label for="username">Username:</label>
         <input type="text" name="username" id="username" required><br><br>
