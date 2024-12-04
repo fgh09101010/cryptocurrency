@@ -14,7 +14,10 @@ def get_history(coin):
     since = exchange.parse8601('2024-12-01T00:00:00Z')  # 開始時間
 
     # 獲取歷史數據
-    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since)
+    try:
+        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since)
+    except:
+        return None
     data=[]
     # 轉換數據為易讀格式
     for entry in ohlcv:
