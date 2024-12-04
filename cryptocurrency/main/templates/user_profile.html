@@ -40,16 +40,16 @@
                 </div><br>
                 <button type="submit" class="upload-submit-button">修改名稱</button>
             </form>
-        
+
             <!-- 名稱修改的訊息 -->
             {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        {% if 'firstname' in message.tags %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+            <ul>
+                {% for message in messages %}
+                {% if 'firstname' in message.tags %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
             {% endif %}
         </section>
 
@@ -85,18 +85,51 @@
                 </div><br>
                 <button type="submit" class="upload-submit-button">修改密碼</button>
             </form>
-        
+
             <!-- 密碼修改的訊息 -->
             {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        {% if 'password' in message.tags %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+            <ul>
+                {% for message in messages %}
+                {% if 'password' in message.tags %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
             {% endif %}
         </section>
+
+        <form method="post" action="{% url 'update_notification_preferences' %}">
+            {% csrf_token %}
+            <label>
+                <input type="checkbox" name="news_notifications" {% if user.notification_preference and user.notification_preference.news_notifications %}checked{% endif %}>
+                接收新聞通知
+            </label>
+            <label>
+                <input type="checkbox" name="email_notifications" {% if user.notification_preference and user.notification_preference.email_notifications %}checked{% endif %}>
+                電子郵件通知
+            </label>
+            <label>
+                <input type="checkbox" name="site_notifications" {% if user.notification_preference and user.notification_preference.site_notifications %}checked{% endif %}>
+                站內通知
+            </label>
+            <button type="submit">保存設定</button>
+        </form>
+        
+        
+
+        {% if user.notifications.exists %}
+        <ul>
+            {% for notification in user.notifications.all %}
+            <li>
+                <a href="{{ notification.url }}">{{ notification.title }}</a> - {{ notification.content }}
+                <small>{{ notification.created_at }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>目前沒有通知。</p>
+        {% endif %}
+
 
         <!-- Back Button -->
         <div class="upload-back-button-container">

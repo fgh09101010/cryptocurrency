@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404,redirect
 import requests
 from django.http import JsonResponse,HttpResponseRedirect
-from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost,User,Comment
+from .models import BitcoinPrice,UserProfile,Coin,NewsWebsite,NewsArticle,CoinHistory,XPost,User,Comment,Reply
 from datetime import datetime
 from django.core.paginator import Paginator
 # 登入頁面
@@ -14,6 +14,8 @@ from django.core.files.base import ContentFile
 from io import BytesIO
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
+from django.utils.safestring import mark_safe
+import markdown
 import plotly.graph_objects as go
 import re
  
@@ -261,6 +263,7 @@ def favorite_coins(request):
     favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
     return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
 
+@login_required
 def news_list(request):
     # 獲取搜尋關鍵字和篩選選項
     query = request.GET.get('q', '')  # 搜尋關鍵字
@@ -328,29 +331,32 @@ def X_list(request):
     return render(request, 'x_list.html', {'xposts': xposts})
 
 def news_detail(request, article_id):
-    # 獲取指定 ID 的新聞文章
     article = get_object_or_404(NewsArticle, pk=article_id)
-    
-    # 根據句號、問號、驚嘆號分段
     content = article.content
     paragraphs = re.split(r'([。!?])', content)
-    # 重新組合段落，每個段落都會以標點符號結束
     paragraphs = [f'{paragraphs[i]}{paragraphs[i+1]}' for i in range(0, len(paragraphs)-1, 2)]
     
-    # 獲取所有與該文章相關的評論
-    comments = article.comments.all()
-
-    if request.method == 'POST' and request.user.is_authenticated:
-        # 提交評論的處理邏輯
+    if request.method == 'POST':
         content = request.POST.get('content')
-        if content:
+        parent_id = request.POST.get('parent_id')  # 確認是否是回覆評論
+        
+        if parent_id:  # 如果是回覆
+            comment = get_object_or_404(Comment, pk=parent_id)
+            Reply.objects.create(
+                comment=comment,  # 回覆評論
+                user=request.user,
+                content=content
+            )
+        else:  # 如果是新增評論
             Comment.objects.create(
                 article=article,
                 user=request.user,
                 content=content
             )
-            return redirect('news_detail', article_id=article.id)
+        
+        return redirect('news_detail', article_id=article.id)
 
+    comments = article.comments.all()
     return render(request, 'news_detail.html', {'article': article, 'comments': comments, 'paragraphs': paragraphs})
 
 
@@ -427,4 +433,52 @@ def update_firstname(request):
 
     # GET 請求時返回對應的頁面
     return render(request, 'user_profile.html')
+
+
+
+# 新聞推送
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import UserNotificationPreference
+
+@login_required
+def upload_profile_image(request):
+    # 處理頭像上傳等其他設定邏輯
+    if request.method == 'POST':
+        # 處理通知設定
+        if 'news_notifications' in request.POST:
+            news_notifications = request.POST.get('news_notifications') == 'on'
+            email_notifications = request.POST.get('email_notifications') == 'on'
+            site_notifications = request.POST.get('site_notifications') == 'on'
+
+            # 取得或創建用戶的通知設置
+            preference, created = UserNotificationPreference.objects.get_or_create(user=request.user)
+            preference.news_notifications = news_notifications
+            preference.email_notifications = email_notifications
+            preference.site_notifications = site_notifications
+            preference.save()
+
+            messages.success(request, '通知設定已更新！')
+
+    return render(request, 'user_profile.html')
+
+@login_required
+def update_notification_preferences(request):
+    # 設置更新通知的邏輯
+    if request.method == 'POST':
+        news_notifications = request.POST.get('news_notifications') == 'on'
+        email_notifications = request.POST.get('email_notifications') == 'on'
+        site_notifications = request.POST.get('site_notifications') == 'on'
+
+        preference, created = UserNotificationPreference.objects.get_or_create(user=request.user)
+        preference.news_notifications = news_notifications
+        preference.email_notifications = email_notifications
+        preference.site_notifications = site_notifications
+        preference.save()
+
+        messages.success(request, '通知設定已更新！')
+        return redirect('user_profile')  # 更新後返回用戶設定頁面
+
+    return redirect('user_profile')  # 如果不是 POST 請求，則重定向回首頁或其他頁面
 
