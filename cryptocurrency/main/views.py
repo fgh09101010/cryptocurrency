@@ -393,18 +393,18 @@ def update_password(request):
 
         if not check_password(current_password, user.password):
             messages.error(request, '目前密碼不正確。', extra_tags='password')
-            return redirect('/upload/')
+            return redirect('/user_profile/')
 
         if new_password != confirm_password:
             messages.error(request, '新密碼與確認密碼不一致。', extra_tags='password')
-            return redirect('/upload/')
+            return redirect('/user_profile/')
 
         user.set_password(new_password)
         user.save()
         update_session_auth_hash(request, user)
 
         messages.success(request, '密碼已成功修改。', extra_tags='password')
-        return redirect('/upload/')
+        return redirect('/user_profile/')
 
     return render(request, 'user_profile.html')
 
