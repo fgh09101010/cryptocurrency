@@ -9,7 +9,10 @@ def get_history(coin):
     })
 
     # 設定交易對和時間間隔
-    symbol = f'{coin}/USDT'  # 交易對
+    if coin == 'USDT':
+        symbol = f'{coin}/DAI'  # 當 coin 是 'USDT' 時
+    else:
+        symbol = f'{coin}/USDT'  # 其他情況為 coin/USDT
     timeframe = '1d'     # K 線圖的時間間隔，例如 '1m', '5m', '1h', '1d'
     since = exchange.parse8601('2024-12-01T00:00:00Z')  # 開始時間
 
