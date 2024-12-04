@@ -96,3 +96,10 @@ class Comment(models.Model):
     content = models.TextField()  # 評論內容
     created_at = models.DateTimeField(auto_now_add=True)  # 創建時間
     updated_at = models.DateTimeField(auto_now=True)  # 更新時間
+
+
+class UserNotificationPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="notification_preference")
+    news_notifications = models.BooleanField(default=True)  # 是否接收新聞通知
+    email_notifications = models.BooleanField(default=False)  # 電子郵件通知
+    site_notifications = models.BooleanField(default=True)  # 站內通知
