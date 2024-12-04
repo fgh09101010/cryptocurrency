@@ -219,7 +219,7 @@ def upload_profile_image(request):
     else:
         form = UserProfileForm(instance=request.user.profile)
 
-    return render(request, 'upload.html', {'form': form})
+    return render(request, 'user_profile.html', {'form': form})
 
 @login_required
 def add_to_favorites(request, pk):
@@ -411,7 +411,7 @@ def update_password(request):
         messages.success(request, '密碼已成功修改。')
         return redirect('upload_profile_image')  # 導回 upload 頁面
 
-    return render(request, 'upload.html')
+    return render(request, 'user_profile.html')
 
 @login_required
 def update_firstname(request):
@@ -425,15 +425,15 @@ def update_firstname(request):
         # 驗證新名稱是否為空
         if not new_firstname.strip():
             messages.error(request, '名稱不可為空。')
-            return redirect('/upload/')  # 替換為你的對應路由名稱
+            return redirect('/user_profile/')  # 替換為你的對應路由名稱
 
         # 更新名稱
         user.first_name = new_firstname
         user.save()
 
         messages.success(request, '名稱已成功修改。')
-        return redirect('/upload/')  # 替換為你的對應路由名稱
+        return redirect('/user_profile/')  # 替換為你的對應路由名稱
 
     # GET 請求時返回對應的頁面
-    return render(request, 'upload.html')
+    return render(request, 'user_profile.html')
 
