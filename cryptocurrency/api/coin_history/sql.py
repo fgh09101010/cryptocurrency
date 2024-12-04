@@ -36,7 +36,8 @@ def get_name():
     conn.close()
     return abbreviations
 
-def save_data(coin_id,data):
+def save_data(coin_id, data):
+    # 連接到 MySQL 資料庫
     conn = mysql.connector.connect(
         host="localhost",
         user=os.getenv('DB_USER'),
@@ -45,31 +46,38 @@ def save_data(coin_id,data):
         time_zone="+08:00"
     )
 
-    # 創建cursor物件
+    # 創建 cursor 物件
     cursor = conn.cursor()
 
-    # 資料
-
-    # 將字符串日期轉換為 DATETIME
+    # 將字符串日期轉換為 DATETIME 格式
     date = datetime.strptime(data[0], '%Y-%m-%d %H:%M:%S')
 
-    # 編寫插入語句
-    query = """
-    INSERT INTO main_coinhistory (date, open_price, high_price, low_price, close_price, volume, coin_id)
-    VALUES (%s, %s, %s, %s, %s, %s, %s);
+    # 檢查是否已存在相同的 date 和 coin_id
+    check_query = """
+    SELECT COUNT(*) FROM main_coinhistory
+    WHERE date = %s AND coin_id = %s;
     """
-    # 執行插入
-    cursor.execute(query, (date, data[1], data[2], data[3], data[4], data[5], coin_id))
+    cursor.execute(check_query, (date, coin_id))
+    result = cursor.fetchone()
 
-    # 提交事務
-    conn.commit()
+    if result[0] > 0:
+        # 如果已經存在相同的資料，則跳過插入
+        print(f"資料已存在：{date}, {coin_id}，跳過插入。")
+    else:
+        # 如果不存在，則執行插入操作
+        query = """
+        INSERT INTO main_coinhistory (date, open_price, high_price, low_price, close_price, volume, coin_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """
+        # 執行插入操作
+        cursor.execute(query, (date, data[1], data[2], data[3], data[4], data[5], coin_id))
 
-    # 顯示插入的資料
-    print(f"資料已插入：{date}, {data[1]}, {data[2]}, {data[3]}, {data[4]}, {data[5]}, {coin_id}")
+        # 提交事務
+        conn.commit()
+
+        # 顯示插入的資料
+        print(f"資料已插入：{date}, {data[1]}, {data[2]}, {data[3]}, {data[4]}, {data[5]}, {coin_id}")
 
     # 關閉連接
     cursor.close()
     conn.close()
-
-if __name__ == "__main__":
-    print(get_name())
