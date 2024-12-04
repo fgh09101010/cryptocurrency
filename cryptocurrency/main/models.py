@@ -72,11 +72,11 @@ class NewsArticle(models.Model):
 class CoinHistory(models.Model):
     coin = models.ForeignKey(Coin, related_name='history', on_delete=models.CASCADE)  # 外鍵，關聯到 Coin 模型
     date = models.DateTimeField()  # 日期
-    open_price = models.DecimalField(max_digits=20, decimal_places=2)  # 開盤價
-    high_price = models.DecimalField(max_digits=20, decimal_places=2)  # 最高價
-    low_price = models.DecimalField(max_digits=20, decimal_places=2)  # 最低價
-    close_price = models.DecimalField(max_digits=20, decimal_places=2)  # 收盤價
-    volume = models.DecimalField(max_digits=20, decimal_places=2)  # 成交量
+    open_price = models.DecimalField(max_digits=20, decimal_places=10)  # 開盤價
+    high_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最高價
+    low_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最低價
+    close_price = models.DecimalField(max_digits=20, decimal_places=10)  # 收盤價
+    volume = models.DecimalField(max_digits=65, decimal_places=10)  # 成交量
 
     def __str__(self):
         return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"

@@ -221,7 +221,7 @@ def upload_profile_image(request):
     else:
         form = UserProfileForm(instance=request.user.profile)
 
-    return render(request, 'upload.html', {'form': form})
+    return render(request, 'user_profile.html', {'form': form})
 
 @login_required
 def add_to_favorites(request, pk):
@@ -398,21 +398,20 @@ def update_password(request):
 
         if not check_password(current_password, user.password):
             messages.error(request, '目前密碼不正確。', extra_tags='password')
-            return redirect('/upload/')
+            return redirect('user_profile')
 
         if new_password != confirm_password:
             messages.error(request, '新密碼與確認密碼不一致。', extra_tags='password')
-            return redirect('/upload/')
+            return redirect('user_profile')
 
         user.set_password(new_password)
         user.save()
         update_session_auth_hash(request, user)
 
         messages.success(request, '密碼已成功修改。', extra_tags='password')
-        return redirect('/upload/')
+        return redirect('user_profile')
 
-    return render(request, 'upload.html')
-
+    return render(request, 'user_profile.html')
 
 @login_required
 def update_firstname(request):
@@ -423,14 +422,14 @@ def update_firstname(request):
 
         if not new_firstname.strip():
             messages.error(request, '名稱不可為空。', extra_tags='firstname')
-            return redirect('/upload/')
+            return redirect('user_profile')  # 替換為你的對應路由名稱
 
         user.first_name = new_firstname
         user.save()
 
         messages.success(request, '名稱已成功修改。', extra_tags='firstname')
-        return redirect('/upload/')
+        return redirect('user_profile')  # 替換為你的對應路由名稱
 
-    return render(request, 'upload.html')
-
+    # GET 請求時返回對應的頁面
+    return render(request, 'user_profile.html')
 
