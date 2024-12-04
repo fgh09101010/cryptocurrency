@@ -391,43 +391,34 @@ def update_password(request):
 
         user = request.user
 
-        # 驗證目前密碼是否正確
         if not check_password(current_password, user.password):
-            messages.error(request, '目前密碼不正確。')
-            return redirect('upload_profile_image')  # 導回 upload 頁面
+            messages.error(request, '目前密碼不正確。', extra_tags='password')
+            return redirect('/upload/')
 
-        # 驗證新密碼與確認密碼是否一致
         if new_password != confirm_password:
-            messages.error(request, '新密碼與確認密碼不一致。')
-            return redirect('upload_profile_image')
+            messages.error(request, '新密碼與確認密碼不一致。', extra_tags='password')
+            return redirect('/upload/')
 
-        # 更新密碼
         user.set_password(new_password)
         user.save()
-
-        # 更新 session，防止用戶登出
         update_session_auth_hash(request, user)
 
-        messages.success(request, '密碼已成功修改。')
-        return redirect('upload_profile_image')  # 導回 upload 頁面
+        messages.success(request, '密碼已成功修改。', extra_tags='password')
+        return redirect('/upload/')
 
     return render(request, 'user_profile.html')
 
 @login_required
 def update_firstname(request):
     if request.method == 'POST':
-        # 從表單獲取新名稱
         new_firstname = request.POST.get('firstname')
 
-        # 獲取當前用戶
         user = request.user
 
-        # 驗證新名稱是否為空
         if not new_firstname.strip():
             messages.error(request, '名稱不可為空。')
             return redirect('/user_profile/')  # 替換為你的對應路由名稱
 
-        # 更新名稱
         user.first_name = new_firstname
         user.save()
 
@@ -436,4 +427,5 @@ def update_firstname(request):
 
     # GET 請求時返回對應的頁面
     return render(request, 'user_profile.html')
+
 
