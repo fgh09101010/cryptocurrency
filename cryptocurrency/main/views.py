@@ -263,6 +263,7 @@ def favorite_coins(request):
     favorite_cryptos = user_profile.favorite_coin.all()  # 獲取用戶的最愛幣
     return render(request, 'favorite_coins.html', {'favorite_cryptos': favorite_cryptos})
 
+@login_required
 def news_list(request):
     # 獲取搜尋關鍵字和篩選選項
     query = request.GET.get('q', '')  # 搜尋關鍵字
