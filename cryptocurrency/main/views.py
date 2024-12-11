@@ -15,7 +15,6 @@ from io import BytesIO
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.utils.safestring import mark_safe
-import markdown
 import plotly.graph_objects as go
 import re
  

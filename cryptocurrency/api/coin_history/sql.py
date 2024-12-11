@@ -8,7 +8,7 @@ env_path = Path(__file__).resolve().parents[2] / '.env'
 # 加載 .env 檔案
 load_dotenv(dotenv_path=env_path)
 
-def get_name():
+def get_name(n):
     # 設定 .env 檔案的路徑
 
     # 初始化交易所
@@ -24,7 +24,7 @@ def get_name():
     cursor = conn.cursor()
 
     # 編寫查詢語句，抓取十筆abbreviation
-    query = "SELECT id, abbreviation FROM main_coin LIMIT 10;"
+    query = f"SELECT id, abbreviation FROM main_coin LIMIT {n};"
 
     # 執行查詢
     cursor.execute(query)
