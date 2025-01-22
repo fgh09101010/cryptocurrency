@@ -17,12 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 複製所有應用文件
 COPY . .
 
-# 執行 Django 遷移命令
-RUN python manage.py makemigrations
-RUN python manage.py migrate --noinput
+# 下載 wait-for-it 腳本
+COPY wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it
 
-# 暴露應用端口
-EXPOSE 8000
-
-# 啟動應用
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "cryptocurrency.wsgi:application"]
+# 在容器啟動時等待 PostgreSQL 服務啟動
+CMD wait-for-it db:5432 -- python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 cryptocurrency.wsgi:application
