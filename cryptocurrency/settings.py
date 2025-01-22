@@ -85,19 +85,10 @@ WSGI_APPLICATION = 'cryptocurrency.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+import dj_database_url
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # 使用 MySQL 引擎，MariaDB 是與 MySQL 兼容的
-        'NAME': os.getenv('DB_NAME'),  # 資料庫名稱，必須從環境變數中獲取
-        'USER': os.getenv('DB_USER'),  # 資料庫用戶名，必須從環境變數中獲取
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # 資料庫密碼，必須從環境變數中獲取
-        'HOST': os.getenv('DB_HOST'),  # 資料庫伺服器地址，必須從環境變數中獲取
-        'PORT': os.getenv('DB_PORT'),  # 資料庫端口，必須從環境變數中獲取
-    }
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'), conn_max_age=600),
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
