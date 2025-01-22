@@ -8,8 +8,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     pkg-config \
-    libpq-dev \  # 安裝 PostgreSQL 客戶端庫
-    && apt-get clean
+    libpq-dev && apt-get clean
 
 # 複製文件
 COPY requirements.txt requirements.txt
