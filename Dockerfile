@@ -14,7 +14,12 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 複製所有應用文件
 COPY . .
+
+# 執行 Django 遷移命令
+RUN python manage.py makemigrations
+RUN python manage.py migrate --noinput
 
 # 暴露應用端口
 EXPOSE 8000
