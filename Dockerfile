@@ -6,9 +6,9 @@ WORKDIR /app
 
 # 安裝系統依賴
 RUN apt-get update && apt-get install -y \
-    libmariadb-dev \
     gcc \
     pkg-config \
+    libpq-dev \  # 安裝 PostgreSQL 客戶端庫
     && apt-get clean
 
 # 複製文件
