@@ -22,5 +22,6 @@ COPY build.sh /app/build.sh
 # 賦予腳本執行權限
 RUN chmod +x /app/build.sh
 
+EXPOSE 8000
 # 設定容器啟動時執行 build.sh
 CMD ["/app/build.sh"]
