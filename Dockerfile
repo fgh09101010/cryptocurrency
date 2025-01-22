@@ -4,11 +4,12 @@ FROM python:3.11-slim
 # 設置工作目錄
 WORKDIR /app
 
-# 安裝系統依賴
+# 安裝系統依賴，包括 curl 和 PostgreSQL 相關的庫
 RUN apt-get update && apt-get install -y \
     gcc \
     pkg-config \
-    libpq-dev && apt-get clean
+    libpq-dev \
+    curl && apt-get clean
 
 # 複製文件
 COPY requirements.txt requirements.txt
@@ -21,5 +22,6 @@ COPY . .
 RUN curl -o /usr/local/bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
     chmod +x /usr/local/bin/wait-for-it.sh
 
-# 在容器啟動時等待 PostgreSQL 服務啟動
-CMD wait-for-it db:5432 -- python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 cryptocurrency.wsgi:application
+# 在容器啟動時等待 PostgreSQL 服務啟動，然後運行 Django 遷移並啟動應用
+CMD wait-for-it db:5432 --timeout=60 --strict -- python manage.py migrate --noinput && \
+    gunicorn --bind 0.0.0.0:8000 cryptocurrency.wsgi:application
