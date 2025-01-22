@@ -17,9 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 複製所有應用文件
 COPY . .
 
-# 下載 wait-for-it 腳本
-COPY wait-for-it.sh /usr/local/bin/wait-for-it
-RUN chmod +x /usr/local/bin/wait-for-it
+# 直接從 GitHub 下載 wait-for-it 腳本
+RUN curl -o /usr/local/bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
+    chmod +x /usr/local/bin/wait-for-it.sh
 
 # 在容器啟動時等待 PostgreSQL 服務啟動
 CMD wait-for-it db:5432 -- python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 cryptocurrency.wsgi:application
