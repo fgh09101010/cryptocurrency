@@ -8,6 +8,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     libmariadb-dev \
     gcc \
+    pkg-config \
+    libmysqlclient-dev \
     && apt-get clean
 
 # 複製文件
