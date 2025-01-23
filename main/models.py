@@ -38,7 +38,7 @@ class CoinHistory(models.Model):
     volume = models.DecimalField(max_digits=65, decimal_places=10)  # 成交量
 
     def __str__(self):
-        return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"   
+        return f"{self.coin.coinname} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"   
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
