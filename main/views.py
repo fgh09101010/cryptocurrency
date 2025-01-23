@@ -501,3 +501,8 @@ def send_email_news(request):
     return render(request, 'email_template.html', {'subject':subject,'latest_articles': latest_articles,'name': user.username})
 
 
+def test(request):
+    from task import news_crawler,fetch_history
+    news_crawler()
+    fetch_history()
+    return HttpResponse("成功")
