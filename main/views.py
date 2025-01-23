@@ -512,7 +512,7 @@ def test(request):
 
     # 使用 get_or_create() 檢查並新增 NewsArticle 資料
     article, created = NewsArticle.objects.get_or_create(
-        url="https://example.com/article/1",
+        url="https://hk.investing.com/news/cryptocurrency-news/article-93CH-724501",
         defaults={
             'title': "以太坊交易收入選後飆升 - 報告",
             'image_url': "https://i-invdn-com.investing.com/news/LYNXNPED840XB_L.jpg",
@@ -559,5 +559,44 @@ def test(request):
             'change_24h': Decimal("-1.23")
         }
     )
+
+    return redirect('home')
+
+
+def test2(request):
+    # 刪除 NewsWebsite
+    try:
+        website = NewsWebsite.objects.get(url="https://hk.investing.com/news/cryptocurrency-news")
+        website.delete()
+    except NewsWebsite.DoesNotExist:
+        pass  # 如果找不到，跳過
+
+    # 刪除 NewsArticle
+    try:
+        article = NewsArticle.objects.get(url="https://hk.investing.com/news/cryptocurrency-news/article-93CH-724501")
+        article.delete()
+    except NewsArticle.DoesNotExist:
+        pass  # 如果找不到，跳過
+
+    # 刪除 Coin
+    try:
+        coin = Coin.objects.get(abbreviation="BTC")
+        coin.delete()
+    except Coin.DoesNotExist:
+        pass  # 如果找不到，跳過
+
+    # 刪除 CoinHistory
+    try:
+        coin_history = CoinHistory.objects.get(coin=coin)
+        coin_history.delete()
+    except CoinHistory.DoesNotExist:
+        pass  # 如果找不到，跳過
+
+    # 刪除 BitcoinPrice
+    try:
+        bitcoin_price = BitcoinPrice.objects.get(coin=coin)
+        bitcoin_price.delete()
+    except BitcoinPrice.DoesNotExist:
+        pass  # 如果找不到，跳過
 
     return redirect('home')
