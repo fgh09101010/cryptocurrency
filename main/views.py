@@ -500,7 +500,7 @@ def send_email_news(request):
 
     return render(request, 'email_template.html', {'subject':subject,'latest_articles': latest_articles,'name': user.username})
 
-
+from decimal import Decimal
 def test(request):
     website, created = NewsWebsite.objects.get_or_create(
         name="範例新聞網站",
