@@ -15,7 +15,7 @@ class Coin(models.Model):
         return self.coinname
 
 class BitcoinPrice(models.Model):
-    coin = models.ForeignKey(Coin,related_name='price', on_delete=models.CASCADE)
+    coin = models.OneToOneField(Coin, related_name='price', on_delete=models.CASCADE)
     usd = models.FloatField()
     twd = models.FloatField()
     jpy = models.FloatField()
