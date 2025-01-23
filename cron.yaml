@@ -1,0 +1,9 @@
+version: 1
+cron:
+  - name: "news-crawler-every-60-minutes"
+    schedule: "0 * * * *"  # 每小時執行一次
+    command: "python manage.py shell -c 'from main.task import news_crawler; news_crawler()'"
+
+  - name: "fetch-history-every-5-minutes"
+    schedule: "*/5 * * * *"  # 每 5 分鐘執行一次
+    command: "python manage.py shell -c 'from main.task import fetch_history; fetch_history()'"
