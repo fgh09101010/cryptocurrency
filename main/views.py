@@ -578,25 +578,28 @@ def test2(request):
     except NewsArticle.DoesNotExist:
         pass  # 如果找不到，跳過
 
-    # 刪除 Coin
+    # 刪除 Coin 和相關聯的資料
     try:
         coin = Coin.objects.get(abbreviation="BTC")
+
+        # 刪除 CoinHistory 之前，先刪除與其相關的資料
+        try:
+            coin_history = CoinHistory.objects.get(coin=coin)
+            coin_history.delete()
+        except CoinHistory.DoesNotExist:
+            pass  # 如果找不到，跳過
+
+        # 刪除 BitcoinPrice
+        try:
+            bitcoin_price = BitcoinPrice.objects.get(coin=coin)
+            bitcoin_price.delete()
+        except BitcoinPrice.DoesNotExist:
+            pass  # 如果找不到，跳過
+
+        # 最後刪除 Coin
         coin.delete()
+
     except Coin.DoesNotExist:
-        pass  # 如果找不到，跳過
-
-    # 刪除 CoinHistory
-    try:
-        coin_history = CoinHistory.objects.get(coin=coin)
-        coin_history.delete()
-    except CoinHistory.DoesNotExist:
-        pass  # 如果找不到，跳過
-
-    # 刪除 BitcoinPrice
-    try:
-        bitcoin_price = BitcoinPrice.objects.get(coin=coin)
-        bitcoin_price.delete()
-    except BitcoinPrice.DoesNotExist:
         pass  # 如果找不到，跳過
 
     return redirect('home')
