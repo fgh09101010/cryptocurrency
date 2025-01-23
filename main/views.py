@@ -502,7 +502,19 @@ def send_email_news(request):
 
 
 def test(request):
-    from .task import news_crawler,fetch_history
-    news_crawler()
-    fetch_history()
+    website, created = NewsWebsite.objects.get_or_create(
+        name="範例新聞網站",
+        url="https://example.com",
+        icon_url="https://example.com/icon.png",
+    )
+    
+    # 新增一筆新聞文章
+    article = NewsArticle.objects.create(
+        title="範例新聞標題",
+        url="https://example.com/article/1",
+        image_url="https://example.com/article/image.jpg",
+        content="這是一段範例新聞的內文內容。",
+        time=datetime.now(),
+        website=website,
+    )
     return HttpResponse("成功")
