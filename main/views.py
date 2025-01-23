@@ -548,8 +548,8 @@ def test(request):
     # 使用 get_or_create() 檢查並新增 BitcoinPrice 資料
     bitcoin_price, created = BitcoinPrice.objects.get_or_create(
         coin=coin,
-        timestamp=datetime.now(),
         defaults={
+            'timestamp' : datetime.now(),
             'usd': 21200.12,
             'twd': 659000.56,
             'jpy': 2890000.45,
