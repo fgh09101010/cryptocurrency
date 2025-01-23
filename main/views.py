@@ -503,49 +503,61 @@ def send_email_news(request):
 from decimal import Decimal
 def test(request):
     website, created = NewsWebsite.objects.get_or_create(
-        name="範例新聞網站",
-        url="https://example.com",
-        icon_url="https://example.com/icon.png",
-    )
-    
-    # 新增一筆新聞文章
-    article = NewsArticle.objects.create(
-        title="範例新聞標題",
+    url="https://example.com",
+    defaults={
+        'name': "範例新聞網站",
+        'icon_url': "https://example.com/icon.png"
+    }
+)
+
+    # 使用 get_or_create() 檢查並新增 NewsArticle 資料
+    article, created = NewsArticle.objects.get_or_create(
         url="https://example.com/article/1",
-        image_url="https://example.com/article/image.jpg",
-        content="這是一段範例新聞的內文內容。",
-        time=datetime.now(),
-        website=website,
-    )
-    coin, created = Coin.objects.get_or_create(
-        coinname="Bitcoin",
-        abbreviation="BTC",
-        logo_url="https://example.com/bitcoin_logo.png",
-        api_id=1
+        defaults={
+            'title': "範例新聞標題",
+            'image_url': "https://example.com/article/image.jpg",
+            'content': "這是一段範例新聞的內文內容。",
+            'time': datetime.now(),
+            'website': website
+        }
     )
 
-    # 新增 CoinHistory 資料
-    CoinHistory.objects.create(
+    # 使用 get_or_create() 檢查並新增 Coin 資料
+    coin, created = Coin.objects.get_or_create(
+        abbreviation="BTC",
+        defaults={
+            'coinname': "Bitcoin",
+            'logo_url': "https://example.com/bitcoin_logo.png",
+            'api_id': 1
+        }
+    )
+
+    # 使用 get_or_create() 檢查並新增 CoinHistory 資料
+    coin_history, created = CoinHistory.objects.get_or_create(
         coin=coin,
         date=datetime.now(),
-        open_price=Decimal("21000.1234567890"),
-        high_price=Decimal("21500.1234567890"),
-        low_price=Decimal("20800.1234567890"),
-        close_price=Decimal("21200.1234567890"),
-        volume=Decimal("50000.1234567890")
+        defaults={
+            'open_price': Decimal("21000.1234567890"),
+            'high_price': Decimal("21500.1234567890"),
+            'low_price': Decimal("20800.1234567890"),
+            'close_price': Decimal("21200.1234567890"),
+            'volume': Decimal("50000.1234567890")
+        }
     )
 
-    # 新增 BitcoinPrice 資料
-    BitcoinPrice.objects.create(
+    # 使用 get_or_create() 檢查並新增 BitcoinPrice 資料
+    bitcoin_price, created = BitcoinPrice.objects.get_or_create(
         coin=coin,
-        usd=21200.12,
-        twd=659000.56,
-        jpy=2890000.45,
-        eur=19800.67,
-        market_cap=Decimal("400000000000.00"),
-        volume_24h=Decimal("20000000000.00"),
-        change_24h=Decimal("-1.23"),
-        timestamp=datetime.now()
+        timestamp=datetime.now(),
+        defaults={
+            'usd': 21200.12,
+            'twd': 659000.56,
+            'jpy': 2890000.45,
+            'eur': 19800.67,
+            'market_cap': Decimal("400000000000.00"),
+            'volume_24h': Decimal("20000000000.00"),
+            'change_24h': Decimal("-1.23")
+        }
     )
 
-    return HttpResponse("成功")
+    return redirect('home')

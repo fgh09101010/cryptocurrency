@@ -28,6 +28,17 @@ class BitcoinPrice(models.Model):
     def __str__(self):
         return f"{self.coin.coinname} - {self.timestamp}"
     
+class CoinHistory(models.Model):
+    coin = models.ForeignKey(Coin, related_name='history', on_delete=models.CASCADE)  # 外鍵，關聯到 Coin 模型
+    date = models.DateTimeField()  # 日期
+    open_price = models.DecimalField(max_digits=20, decimal_places=10)  # 開盤價
+    high_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最高價
+    low_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最低價
+    close_price = models.DecimalField(max_digits=20, decimal_places=10)  # 收盤價
+    volume = models.DecimalField(max_digits=65, decimal_places=10)  # 成交量
+
+    def __str__(self):
+        return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"   
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -70,17 +81,7 @@ class NewsArticle(models.Model):
         return self.title
     
     
-class CoinHistory(models.Model):
-    coin = models.ForeignKey(Coin, related_name='history', on_delete=models.CASCADE)  # 外鍵，關聯到 Coin 模型
-    date = models.DateTimeField()  # 日期
-    open_price = models.DecimalField(max_digits=20, decimal_places=10)  # 開盤價
-    high_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最高價
-    low_price = models.DecimalField(max_digits=20, decimal_places=10)  # 最低價
-    close_price = models.DecimalField(max_digits=20, decimal_places=10)  # 收盤價
-    volume = models.DecimalField(max_digits=65, decimal_places=10)  # 成交量
 
-    def __str__(self):
-        return f"{self.coin.name} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
     
 
 class XPost(models.Model):
