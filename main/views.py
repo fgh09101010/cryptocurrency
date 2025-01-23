@@ -503,10 +503,10 @@ def send_email_news(request):
 from decimal import Decimal
 def test(request):
     website, created = NewsWebsite.objects.get_or_create(
-    url="https://example.com",
+    url="https://hk.investing.com/news/cryptocurrency-news",
     defaults={
-        'name': "範例新聞網站",
-        'icon_url': "https://example.com/icon.png"
+        'name': "investing",
+        'icon_url': "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcrwkwizaO4rpZ8b4af74qxlZKh6YK98JjGw&s"
     }
 )
 
@@ -514,8 +514,8 @@ def test(request):
     article, created = NewsArticle.objects.get_or_create(
         url="https://example.com/article/1",
         defaults={
-            'title': "範例新聞標題",
-            'image_url': "https://example.com/article/image.jpg",
+            'title': "以太坊交易收入選後飆升 - 報告",
+            'image_url': "https://i-invdn-com.investing.com/news/LYNXNPED840XB_L.jpg",
             'content': "這是一段範例新聞的內文內容。",
             'time': datetime.now(),
             'website': website
@@ -527,7 +527,7 @@ def test(request):
         abbreviation="BTC",
         defaults={
             'coinname': "Bitcoin",
-            'logo_url': "https://example.com/bitcoin_logo.png",
+            'logo_url': "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
             'api_id': 1
         }
     )
