@@ -42,20 +42,24 @@ def news_crawler():
         Q(content__isnull=True) | Q(content__exact="") | Q(image_url__isnull=True) | Q(image_url__exact="")
     )
     for article in articles_empty:
-        a=site_all.article(article)
-        if a:
-            a.get_news_details()
-            NewsArticle.objects.update_or_create(
-                    url=a.url,
-                    defaults={
-                    'title': a.title,
-                    'time': a.time,
-                    'image_url':a.image_url,
-                    "content":a.content,
-                    'website':a.website
-                },
-                )
-            print(a.title)
+        try :
+            a=site_all.article(article)
+            if a:
+                
+                    a.get_news_details()
+                    NewsArticle.objects.update_or_create(
+                            url=a.url,
+                            defaults={
+                            'title': a.title,
+                            'time': a.time,
+                            'image_url':a.image_url,
+                            "content":a.content,
+                            'website':a.website
+                        },
+                        )
+                    print(a.title)
+        except:
+            continue
 
 
 
@@ -103,3 +107,72 @@ def fetch_history():
                 volume=volume,
             )
         print(f"存入資料庫{len(data)}筆：{c.coin} {history_data[0]}")
+
+
+def test():
+    from decimal import Decimal
+    from .models import Coin,CoinHistory,NewsWebsite,NewsArticle,BitcoinPrice
+    website, created = NewsWebsite.objects.get_or_create(
+    url="https://hk.investing.com/news/cryptocurrency-news",
+    defaults={
+        'name': "investing",
+        'icon_url': "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcrwkwizaO4rpZ8b4af74qxlZKh6YK98JjGw&s"
+    }
+)
+
+    # 使用 get_or_create() 檢查並新增 NewsArticle 資料
+    article, created = NewsArticle.objects.get_or_create(
+        url="https://hk.investing.com/news/cryptocurrency-news/article-93CH-724501",
+        defaults={
+            'title': "以太坊交易收入選後飆升 - 報告",
+            'image_url': "https://i-invdn-com.investing.com/news/LYNXNPED840XB_L.jpg",
+            'content': "這是一段範例新聞的內文內容。",
+            'time': datetime.now(),
+            'website': website
+        }
+    )
+
+    # 使用 get_or_create() 檢查並新增 Coin 資料
+    coin, created = Coin.objects.get_or_create(
+        abbreviation="BTC",
+        defaults={
+            'coinname': "Bitcoin",
+            'logo_url': "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+            'api_id': 1
+        }
+    )
+
+    # 使用 get_or_create() 檢查並新增 CoinHistory 資料
+    coin_history, created = CoinHistory.objects.get_or_create(
+        coin=coin,
+        defaults={
+            'date' :datetime.now(),
+            'open_price': Decimal("21000.1234567890"),
+            'high_price': Decimal("21500.1234567890"),
+            'low_price': Decimal("20800.1234567890"),
+            'close_price': Decimal("21200.1234567890"),
+            'volume': Decimal("50000.1234567890")
+        }
+    )
+
+    # 使用 get_or_create() 檢查並新增 BitcoinPrice 資料
+    bitcoin_price, created = BitcoinPrice.objects.get_or_create(
+        coin=coin,
+        defaults={
+            'timestamp' : datetime.now(),
+            'usd': 21200.12,
+            'twd': 659000.56,
+            'jpy': 2890000.45,
+            'eur': 19800.67,
+            'market_cap': Decimal("400000000000.00"),
+            'volume_24h': Decimal("20000000000.00"),
+            'change_24h': Decimal("-1.23")
+        }
+    )
+    print("成功")
+'''
+from main.task import fetch_history,news_crawler,test
+fetch_history()
+news_crawler()
+test()
+'''
