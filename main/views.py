@@ -535,8 +535,8 @@ def test(request):
     # 使用 get_or_create() 檢查並新增 CoinHistory 資料
     coin_history, created = CoinHistory.objects.get_or_create(
         coin=coin,
-        date=datetime.now(),
         defaults={
+            'date' :datetime.now(),
             'open_price': Decimal("21000.1234567890"),
             'high_price': Decimal("21500.1234567890"),
             'low_price': Decimal("20800.1234567890"),
