@@ -502,7 +502,7 @@ def send_email_news(request):
 
 
 def test(request):
-    from task import news_crawler,fetch_history
+    from .task import news_crawler,fetch_history
     news_crawler()
     fetch_history()
     return HttpResponse("成功")
